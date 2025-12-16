@@ -1,0 +1,398 @@
+{
+  "version": "2.0.1",
+  "motor": "ClasificadorCascada",
+  "descripcion": "Sistema de categorización de 2 niveles - TORO Web",
+  "fecha_migracion": "2024-12-16",
+  "fuente": "Migrado desde CLI v2.0.0",
+
+  "metadata": {
+    "total_reglas_nivel1": 10,
+    "total_reglas_nivel2": 24,
+    "total_categorias": 15,
+    "cobertura_esperada": "99%"
+  },
+
+  "nivel1_concepto": {
+    "descripcion": "Reglas basadas en el campo CONCEPTO del movimiento",
+    "tipo_busqueda": "case-insensitive en texto normalizado",
+    "reglas": [
+      {
+        "id": "ING-001",
+        "patron": "crédito por transferencia",
+        "tipo_match": "exacto",
+        "categoria": "INGRESOS",
+        "subcategoria": "Transferencias",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 90,
+        "notas": "Transferencias recibidas"
+      },
+      {
+        "id": "ING-002",
+        "patron": "credito debin",
+        "tipo_match": "exacto",
+        "categoria": "INGRESOS",
+        "subcategoria": "DEBIN_Afiliados",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 95,
+        "notas": "DEBIN recibido de afiliados"
+      },
+      {
+        "id": "ING-003",
+        "patron": "cred bca electronica interbanc",
+        "tipo_match": "exacto",
+        "categoria": "INGRESOS",
+        "subcategoria": "Transferencias",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 90,
+        "notas": "Transferencias interbancarias"
+      },
+      {
+        "id": "ING-004",
+        "patron": "cobranzas resumen visa",
+        "tipo_match": "contiene",
+        "categoria": "INGRESOS",
+        "subcategoria": "Tarjetas",
+        "prioridad": 2,
+        "activo": true,
+        "confianza_base": 85,
+        "notas": "Cobranzas con tarjeta VISA"
+      },
+      {
+        "id": "IMP-001",
+        "patron": "impuesto débitos y créditos/db",
+        "tipo_match": "exacto",
+        "categoria": "EGRESOS",
+        "subcategoria": "Impuestos_Debitos_Creditos",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 100,
+        "notas": "Impuesto sobre débitos bancarios"
+      },
+      {
+        "id": "IMP-002",
+        "patron": "iibb- acreditaciones bancarias",
+        "tipo_match": "contiene",
+        "categoria": "EGRESOS",
+        "subcategoria": "Impuestos_IIBB",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 100,
+        "notas": "Ingresos Brutos"
+      },
+      {
+        "id": "GAS-001",
+        "patron": "compra visa débito",
+        "tipo_match": "contiene",
+        "categoria": "EGRESOS",
+        "subcategoria": "Gastos_Compras",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 70,
+        "notas": "Compras con tarjeta de débito - puede refinarse en nivel 2"
+      },
+      {
+        "id": "SRV-001",
+        "patron": "pago de servicios",
+        "tipo_match": "contiene",
+        "categoria": "EGRESOS",
+        "subcategoria": "Servicios_Varios",
+        "prioridad": 2,
+        "activo": true,
+        "confianza_base": 70,
+        "notas": "Pago de servicios - puede refinarse en nivel 2"
+      },
+      {
+        "id": "EGR-001",
+        "patron": "transferencia por cbu",
+        "tipo_match": "exacto",
+        "categoria": "EGRESOS",
+        "subcategoria": "Transferencias",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 70,
+        "notas": "Transferencias enviadas - puede refinarse en nivel 2"
+      },
+      {
+        "id": "COM-001",
+        "patron": "comis.transferencias",
+        "tipo_match": "contiene",
+        "categoria": "EGRESOS",
+        "subcategoria": "Comisiones_Transferencias",
+        "prioridad": 1,
+        "activo": true,
+        "confianza_base": 95,
+        "notas": "Comisión por transferencias"
+      }
+    ]
+  },
+
+  "nivel2_refinamiento": {
+    "descripcion": "Reglas de refinamiento basadas en el campo DETALLE del movimiento",
+    "tipo_busqueda": "case-insensitive, búsqueda de palabras clave",
+    "categorias_refinables": [
+      "Gastos_Compras",
+      "Transferencias",
+      "Servicios_Varios"
+    ],
+    "reglas": {
+      "Gastos_Compras": {
+        "descripcion": "Refina compras genéricas según el detalle",
+        "patrones": [
+          {
+            "id": "REF-GAS-001",
+            "palabras_clave": ["aguas cordobesas", "aguascordobesas"],
+            "subcategoria_refinada": "Servicios_Agua",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Servicio de agua potable"
+          },
+          {
+            "id": "REF-GAS-002",
+            "palabras_clave": ["epec", "epeced", "pagos360*epec"],
+            "subcategoria_refinada": "Servicios_Electricidad",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Servicio eléctrico EPEC Córdoba"
+          },
+          {
+            "id": "REF-GAS-003",
+            "palabras_clave": ["gas del centro", "gascentro"],
+            "subcategoria_refinada": "Servicios_Gas",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Servicio de gas natural"
+          },
+          {
+            "id": "REF-GAS-004",
+            "palabras_clave": ["microsoft"],
+            "subcategoria_refinada": "Servicios_Software",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Microsoft 365, Azure, etc."
+          },
+          {
+            "id": "REF-GAS-005",
+            "palabras_clave": ["openai", "chatgpt"],
+            "subcategoria_refinada": "Servicios_Software",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "OpenAI API/ChatGPT"
+          },
+          {
+            "id": "REF-GAS-006",
+            "palabras_clave": ["google gsuite", "google workspace", "google one", "youtube"],
+            "subcategoria_refinada": "Servicios_Software",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Servicios Google"
+          },
+          {
+            "id": "REF-GAS-007",
+            "palabras_clave": ["netflix", "spotify", "hbo"],
+            "subcategoria_refinada": "Servicios_Entretenimiento",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Plataformas de streaming"
+          },
+          {
+            "id": "REF-GAS-008",
+            "palabras_clave": ["hosting", "godaddy", "aws", "cloud"],
+            "subcategoria_refinada": "Servicios_Hosting",
+            "confianza_refinada": 85,
+            "activo": true,
+            "notas": "Servicios de hosting y cloud"
+          },
+          {
+            "id": "REF-GAS-009",
+            "palabras_clave": ["pedidosya", "rappi"],
+            "subcategoria_refinada": "Gastos_Viaticos",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Delivery de comida"
+          },
+          {
+            "id": "REF-GAS-010",
+            "palabras_clave": ["uber", "cabify"],
+            "subcategoria_refinada": "Gastos_Movilidad",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Transporte/movilidad"
+          },
+          {
+            "id": "REF-GAS-011",
+            "palabras_clave": ["merpago", "mercadopago", "mercadolibre"],
+            "subcategoria_refinada": "Gastos_Compras_ML",
+            "confianza_refinada": 85,
+            "activo": true,
+            "notas": "Compras en Mercado Libre/Pago"
+          }
+        ],
+        "subcategoria_default": "Gastos_Compras_Varias"
+      },
+      "Transferencias": {
+        "descripcion": "Refina transferencias según el destinatario",
+        "patrones": [
+          {
+            "id": "REF-EGR-001",
+            "palabras_clave": ["farmacia", "farmacias lider"],
+            "subcategoria_refinada": "Prestadores_Farmacias",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Farmacias"
+          },
+          {
+            "id": "REF-EGR-002",
+            "palabras_clave": ["laboratorio"],
+            "subcategoria_refinada": "Prestadores_Laboratorios",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Laboratorios de análisis clínicos"
+          },
+          {
+            "id": "REF-EGR-003",
+            "palabras_clave": ["clinica", "sanatorio", "aclinor"],
+            "subcategoria_refinada": "Prestadores_Clinicas",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Clínicas y sanatorios"
+          },
+          {
+            "id": "REF-EGR-004",
+            "palabras_clave": ["dr.", "dra."],
+            "subcategoria_refinada": "Prestadores_Profesionales",
+            "confianza_refinada": 85,
+            "activo": true,
+            "notas": "Profesionales de la salud"
+          },
+          {
+            "id": "REF-EGR-005",
+            "palabras_clave": [
+              "tosin", "plizzo", "tosca", "bernardi", "lopez", "tura", "decade",
+              "frandino", "picatto", "diaz gustavo", "cabrera", "ghiglione",
+              "figueroa", "caballi", "gorosito", "lezcano", "marengo", "pizzichini",
+              "gentile", "sosa", "bonaldi", "cuevas", "roda"
+            ],
+            "subcategoria_refinada": "Prestadores_Profesionales",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Prestadores conocidos por apellido"
+          },
+          {
+            "id": "REF-EGR-006",
+            "palabras_clave": ["municipalidad", "municipio"],
+            "subcategoria_refinada": "Impuestos_Municipal",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Pagos municipales"
+          },
+          {
+            "id": "REF-EGR-007",
+            "palabras_clave": ["afip"],
+            "subcategoria_refinada": "Impuestos_AFIP",
+            "confianza_refinada": 100,
+            "activo": true,
+            "notas": "Pagos a AFIP"
+          },
+          {
+            "id": "REF-EGR-008",
+            "palabras_clave": ["arba"],
+            "subcategoria_refinada": "Impuestos_ARBA",
+            "confianza_refinada": 100,
+            "activo": true,
+            "notas": "ARBA Buenos Aires"
+          }
+        ],
+        "subcategoria_default": "Transferencias_Varias"
+      },
+      "Servicios_Varios": {
+        "descripcion": "Refina servicios genéricos",
+        "patrones": [
+          {
+            "id": "REF-SRV-001",
+            "palabras_clave": ["aguas cordobesas"],
+            "subcategoria_refinada": "Servicios_Agua",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Servicio de agua"
+          },
+          {
+            "id": "REF-SRV-002",
+            "palabras_clave": ["epec", "epeced"],
+            "subcategoria_refinada": "Servicios_Electricidad",
+            "confianza_refinada": 95,
+            "activo": true,
+            "notas": "Servicio eléctrico"
+          },
+          {
+            "id": "REF-SRV-003",
+            "palabras_clave": ["gas"],
+            "subcategoria_refinada": "Servicios_Gas",
+            "confianza_refinada": 90,
+            "activo": true,
+            "notas": "Servicio de gas"
+          },
+          {
+            "id": "REF-SRV-004",
+            "palabras_clave": ["afip"],
+            "subcategoria_refinada": "Impuestos_AFIP",
+            "confianza_refinada": 100,
+            "activo": true,
+            "notas": "Pago AFIP vía servicios"
+          }
+        ],
+        "subcategoria_default": "Servicios_Varios"
+      }
+    }
+  },
+
+  "categorias_disponibles": {
+    "INGRESOS": [
+      "Transferencias",
+      "DEBIN_Afiliados",
+      "Tarjetas",
+      "Obras_Sociales",
+      "Otros_Ingresos"
+    ],
+    "EGRESOS": [
+      "Prestadores_Profesionales",
+      "Prestadores_Clinicas",
+      "Prestadores_Farmacias",
+      "Prestadores_Laboratorios",
+      "Impuestos_AFIP",
+      "Impuestos_IIBB",
+      "Impuestos_Municipal",
+      "Impuestos_ARBA",
+      "Impuestos_Debitos_Creditos",
+      "Comisiones_Transferencias",
+      "Comisiones_Bancarias",
+      "Servicios_Agua",
+      "Servicios_Electricidad",
+      "Servicios_Gas",
+      "Servicios_Software",
+      "Servicios_Hosting",
+      "Servicios_Entretenimiento",
+      "Servicios_Varios",
+      "Gastos_Compras",
+      "Gastos_Compras_ML",
+      "Gastos_Compras_Varias",
+      "Gastos_Viaticos",
+      "Gastos_Movilidad",
+      "Transferencias",
+      "Transferencias_Varias"
+    ]
+  },
+
+  "notas_tecnicas": {
+    "tipo_match_nivel1": "Valores: 'exacto' (==), 'contiene' (in), 'comienza' (startswith), 'termina' (endswith)",
+    "prioridad": "1=alta, 2=media, 3=baja. A mayor prioridad, se evalúa primero",
+    "patron": "Siempre en minúsculas para comparación case-insensitive",
+    "activo": "Si false, la regla se ignora",
+    "confianza_base": "0-100, indica la confianza de la regla nivel 1",
+    "confianza_refinada": "0-100, indica la confianza tras refinamiento nivel 2",
+    "palabras_clave": "Búsqueda case-insensitive en DETALLE. Si cualquiera coincide, aplica la regla",
+    "flujo": "1) Normalizar concepto → 2) Buscar en nivel1 → 3) Si aplica refinamiento, buscar en nivel2 → 4) Retornar categoría + subcategoría + confianza"
+  }
+}
