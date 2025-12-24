@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "motor": "CategorizadorCascada v2.0",
+  "fecha_creacion": "2025-12-16",
+  "total_movimientos": 8,
+  "descripcion": "Dataset de prueba para validación de categorización",
+  "movimientos": [
+    {
+      "id": 1,
+      "fecha": "2025-11-30",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -2.4,
+      "concepto": "Impuesto Débitos y Créditos/DB",
+      "detalle": "Impuesto Débitos y Créditos/DB",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 3,
+      "fecha": "2025-11-29",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -51.24,
+      "concepto": "Impuesto Débitos y Créditos/DB",
+      "detalle": "Impuesto Débitos y Créditos/DB",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 5,
+      "fecha": "2025-11-29",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -177.0,
+      "concepto": "Impuesto Débitos y Créditos/DB",
+      "detalle": "Impuesto Débitos y Créditos/DB",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 2,
+      "fecha": "2025-11-30",
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 982948",
+      "monto": -400.0,
+      "concepto": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 982948",
+      "detalle": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 982948",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 4,
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PedidosYa*Grido Helados OPERACION: 860161",
+      "monto": -8540.0,
+      "concepto": "Compra Visa Débito - COMERCIO: PedidosYa*Grido Helados OPERACION: 860161",
+      "detalle": "Compra Visa Débito - COMERCIO: PedidosYa*Grido Helados OPERACION: 860161",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 8,
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: OPENAI *CHATGPT SUBSCR OPERACION: 779574",
+      "monto": -29500.0,
+      "concepto": "Compra Visa Débito - COMERCIO: OPENAI *CHATGPT SUBSCR OPERACION: 779574",
+      "detalle": "Compra Visa Débito - COMERCIO: OPENAI *CHATGPT SUBSCR OPERACION: 779574",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 10,
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 683488",
+      "monto": -650.0,
+      "concepto": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 683488",
+      "detalle": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 683488",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    },
+    {
+      "id": 12,
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PedidosYa*Mar OPERACION: 589171",
+      "monto": -34033.45,
+      "concepto": "Compra Visa Débito - COMERCIO: PedidosYa*Mar OPERACION: 589171",
+      "detalle": "Compra Visa Débito - COMERCIO: PedidosYa*Mar OPERACION: 589171",
+      "categoria_esperada": null,
+      "subcategoria_esperada": null
+    }
+  ]
+}

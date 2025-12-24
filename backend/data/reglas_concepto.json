@@ -1,0 +1,104 @@
+{
+  "version": "2.0",
+  "motor": "ClasificadorCascada",
+  "descripcion": "Reglas de clasificación Nivel 1 - Sistema TORO · Resumen de Cuentas",
+  "fecha_actualizacion": "2025-11-27",
+  "reglas": [
+    {
+      "id": "ING-001",
+      "patron": "crédito por transferencia",
+      "tipo_match": "exacto",
+      "categoria": "Ingresos - Transferencias",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Transferencias recibidas"
+    },
+    {
+      "id": "ING-002",
+      "patron": "credito debin",
+      "tipo_match": "exacto",
+      "categoria": "Ingresos - DEBIN Afiliados",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "DEBIN recibido de afiliados"
+    },
+    {
+      "id": "ING-003",
+      "patron": "cred bca electronica interbanc",
+      "tipo_match": "exacto",
+      "categoria": "Ingresos - Transferencias",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Transferencias interbancarias"
+    },
+    {
+      "id": "ING-004",
+      "patron": "cobranzas resumen visa",
+      "tipo_match": "contiene",
+      "categoria": "Ingresos - Tarjetas",
+      "prioridad": 2,
+      "activo": true,
+      "notas": "Cobranzas con tarjeta VISA"
+    },
+    {
+      "id": "IMP-001",
+      "patron": "impuesto débitos y créditos/db",
+      "tipo_match": "exacto",
+      "categoria": "Impuestos - Débitos y Créditos",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Impuesto sobre débitos bancarios"
+    },
+    {
+      "id": "IMP-002",
+      "patron": "iibb- acreditaciones bancarias",
+      "tipo_match": "contiene",
+      "categoria": "Impuestos - IIBB",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Ingresos Brutos"
+    },
+    {
+      "id": "GAS-001",
+      "patron": "compra visa débito",
+      "tipo_match": "exacto",
+      "categoria": "Gastos Operativos - Compras",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Compras con tarjeta de débito"
+    },
+    {
+      "id": "SRV-001",
+      "patron": "pago de servicios",
+      "tipo_match": "contiene",
+      "categoria": "Servicios - Varios",
+      "prioridad": 2,
+      "activo": true,
+      "notas": "Pago de servicios públicos/privados"
+    },
+    {
+      "id": "EGR-001",
+      "patron": "transferencia por cbu",
+      "tipo_match": "exacto",
+      "categoria": "Egresos - Transferencias",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Transferencias enviadas"
+    },
+    {
+      "id": "COM-001",
+      "patron": "comis.transferencias",
+      "tipo_match": "contiene",
+      "categoria": "Comisiones Bancarias - Transferencias",
+      "prioridad": 1,
+      "activo": true,
+      "notas": "Comisión por transferencias"
+    }
+  ],
+  "notas_tecnicas": {
+    "tipo_match": "Valores posibles: 'exacto' (==), 'contiene' (in), 'comienza' (startswith), 'termina' (endswith)",
+    "prioridad": "1=alta, 2=media, 3=baja. A mayor prioridad, se evalúa primero",
+    "patron": "Siempre en minúsculas para comparación case-insensitive",
+    "activo": "Si false, la regla se ignora (útil para desactivar temporalmente)"
+  }
+}

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>{{ title or "Reportes · TORO" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/header.css') }}">
+  <script src="{{ url_for('static', path='js/periodo-global.js') }}"></script>
+</head>
+<body>
+
+  <!-- Header común -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="/" class="brand">
+          <img src="{{ url_for('static', path='img/brand/logo-toro-navbar-clean.png') }}" alt="TORO" class="logo-toro-navbar">
+          <div class="brand-text">
+            <div class="brand-title">Investment Manager</div>
+            <div class="brand-subtitle">Gestión Financiera Inteligente</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="header-nav">
+        <div class="header-periodo">
+          <label for="periodo-global">📅 Periodo:</label>
+          <select id="periodo-global">
+            <option value="">Todos los periodos</option>
+          </select>
+        </div>
+        <a href="/" class="nav-link" data-toro-nav="1">📊 Dashboard</a>
+        <a href="/reportes" class="nav-link active" data-toro-nav="1">📈 Reportes</a>
+        <a href="/analytics" class="nav-link" data-toro-nav="1">📉 Analytics</a>
+        <a href="/configuracion" class="nav-link" data-toro-nav="1">⚙️ Configuración</a>
+        <a href="/metadata" class="nav-link" data-toro-nav="1">🔍 Metadata</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Selector de Mes -->
+    <div class="card">
+      <h3>Período</h3>
+      <div style="margin-top: 12px;">
+        <label for="mes-selector" style="display:block; margin-bottom:6px; color: var(--muted);">
+          Seleccionar período:
+        </label>
+        <select
+          id="mes-selector"
+          style="padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--panel); color:var(--text); font-size:14px; min-width: 150px;"
+        >
+          <option value="">Todos los períodos</option>
+        </select>
+        <button
+          id="btn-cargar"
+          style="margin-left:8px; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--text); cursor:pointer; font-size:14px;"
+        >
+          Cargar Reporte
+        </button>
+        <button
+          id="btn-descargar-pdf"
+          style="margin-left:8px; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:rgba(239, 68, 68, 0.2); color:#ef4444; cursor:pointer; font-size:14px; font-weight:600;"
+          title="Descargar reporte en PDF"
+        >
+          📄 Descargar PDF
+        </button>
+        <button
+          id="btn-descargar-excel"
+          style="margin-left:8px; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:rgba(16, 185, 129, 0.2); color:#10b981; cursor:pointer; font-size:14px; font-weight:600;"
+          title="Descargar movimientos en Excel"
+        >
+          📊 Descargar Excel
+        </button>
+        <button
+          id="btn-descargar-excel-ejecutivo"
+          style="margin-left:8px; padding:8px 16px; border-radius:8px; border:1px solid var(--border); background:rgba(59, 130, 246, 0.2); color:#3b82f6; cursor:pointer; font-size:14px; font-weight:600;"
+          title="Descargar Excel Ejecutivo (5 hojas completas)"
+        >
+          📥 Excel Ejecutivo
+        </button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="card">
+      <h3>KPIs del Período: <span id="kpi-periodo">-</span></h3>
+
+      <div class="grid" style="margin-top:16px;">
+        <div class="tile">
+          <div class="tile-title">Ingresos Totales</div>
+          <div id="kpi-ingresos" style="font-size:24px; font-weight:700; margin-top:8px; color:#4ade80;">$0.00</div>
+        </div>
+
+        <div class="tile">
+          <div class="tile-title">Egresos Totales</div>
+          <div id="kpi-egresos" style="font-size:24px; font-weight:700; margin-top:8px; color:#f87171;">$0.00</div>
+        </div>
+
+        <div class="tile">
+          <div class="tile-title">Saldo Neto</div>
+          <div id="kpi-saldo" style="font-size:24px; font-weight:700; margin-top:8px;">$0.00</div>
+        </div>
+
+        <div class="tile">
+          <div class="tile-title">Movimientos</div>
+          <div id="kpi-movimientos" style="font-size:24px; font-weight:700; margin-top:8px;">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparación Mes Anterior -->
+    <div class="card">
+      <h3>Comparación Mes Anterior</h3>
+      <div id="comparacion-mes-anterior" style="margin-top:12px; color:var(--muted);">
+        Cargando...
+      </div>
+    </div>
+
+    <!-- A) SALDOS BANCARIOS -->
+    <div class="card">
+      <h3>Saldos Bancarios</h3>
+      <table style="width:100%; margin-top:12px; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+            <th style="padding:10px; color:var(--muted); font-weight:600;">Concepto</th>
+            <th style="padding:10px; color:var(--muted); font-weight:600; text-align:right;">Valor</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-saldos">
+          <tr><td colspan="2" style="padding:10px; opacity:.6;">Sin datos</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- B) CLASIFICACIÓN -->
+    <div class="card">
+      <h3>Clasificación de Movimientos</h3>
+      <table style="width:100%; margin-top:12px; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+            <th style="padding:10px; color:var(--muted); font-weight:600;">Concepto</th>
+            <th style="padding:10px; color:var(--muted); font-weight:600; text-align:right;">Cantidad</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-clasificacion">
+          <tr><td colspan="2" style="padding:10px; opacity:.6;">Sin datos</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- C) DESGLOSE INGRESOS COMPLETO -->
+    <div class="card">
+      <h3>Desglose de Ingresos por Categoría</h3>
+      <table style="width:100%; margin-top:12px; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+            <th style="padding:10px; color:var(--muted); font-weight:600;">Categoría</th>
+            <th style="padding:10px; color:var(--muted); font-weight:600; text-align:right;">Monto</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-desglose-ingresos">
+          <tr><td colspan="2" style="padding:10px; opacity:.6;">Sin ingresos en el período</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- D) DESGLOSE EGRESOS COMPLETO -->
+    <div class="card">
+      <h3>Desglose de Egresos por Categoría</h3>
+      <table style="width:100%; margin-top:12px; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border); text-align: left;">
+            <th style="padding:10px; color:var(--muted); font-weight:600;">Categoría</th>
+            <th style="padding:10px; color:var(--muted); font-weight:600; text-align:right;">Monto</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-desglose-egresos">
+          <tr><td colspan="2" style="padding:10px; opacity:.6;">Sin egresos en el período</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Top Egresos por Categoría (mantener para compatibilidad) -->
+    <div class="card">
+      <h3>Top 5 Egresos por Categoría</h3>
+      <div id="top-egresos" style="margin-top:12px;">
+        <div style="opacity:.6;">Sin datos</div>
+      </div>
+    </div>
+
+    <!-- Últimos Movimientos -->
+    <div class="card">
+      <h3>Últimos Movimientos del Período</h3>
+      <div id="ultimos-movimientos" style="margin-top:12px;">
+        <div style="opacity:.6;">Sin movimientos</div>
+      </div>
+    </div>
+
+    <!-- Debug JSON -->
+    <div class="card" style="margin-top:24px;">
+      <details>
+        <summary style="cursor:pointer; color:var(--muted);">Ver JSON completo (debug)</summary>
+        <pre id="debug-json" style="margin-top:12px; padding:12px; background:rgba(0,0,0,0.3); border-radius:8px; overflow:auto; font-size:12px; max-height:400px;">
+{}</pre>
+      </details>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <small>TORO Investment Manager v2.1.0 · Reportes Ejecutivos</small>
+    </div>
+  </footer>
+
+  <script>
+    // Funciones de utilidad
+    function moneyARS(n) {
+      try {
+        return new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(n);
+      } catch {
+        return String(n);
+      }
+    }
+
+    function pretty(obj) {
+      return JSON.stringify(obj, null, 2);
+    }
+
+    // Cargar reporte
+    async function cargarReporte() {
+      const mesInput = document.getElementById("mes-selector").value;
+      const period = mesInput || null;
+
+      try {
+        const url = period ? `/api/reportes?period=${period}` : "/api/reportes";
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          const error = await res.json();
+          alert(`Error: ${error.detail || res.statusText}`);
+          return;
+        }
+
+        const data = await res.json();
+        const reporte = data.reporte;
+
+        // Actualizar KPIs
+        document.getElementById("kpi-periodo").textContent = reporte.periodo;
+        document.getElementById("kpi-ingresos").textContent = moneyARS(reporte.kpis.ingresos_total);
+        document.getElementById("kpi-egresos").textContent = moneyARS(reporte.kpis.egresos_total);
+        document.getElementById("kpi-saldo").textContent = moneyARS(reporte.kpis.saldo_neto);
+        document.getElementById("kpi-movimientos").textContent = reporte.kpis.cantidad_movimientos;
+
+        // Comparación mes anterior
+        const comp = reporte.comparacion_mes_anterior;
+        const compHTML = `
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:8px;">
+            <div>
+              <div style="font-size:12px; opacity:.7;">Ingresos Anterior</div>
+              <div style="font-weight:600;">${moneyARS(comp.ingresos_total_anterior)}</div>
+            </div>
+            <div>
+              <div style="font-size:12px; opacity:.7;">Egresos Anterior</div>
+              <div style="font-weight:600;">${moneyARS(comp.egresos_total_anterior)}</div>
+            </div>
+            <div>
+              <div style="font-size:12px; opacity:.7;">Variación Saldo</div>
+              <div style="font-weight:600; color:${comp.variacion_saldo_pct > 0 ? '#4ade80' : '#f87171'};">
+                ${comp.variacion_saldo_pct !== null ? comp.variacion_saldo_pct + '%' : 'N/A'}
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById("comparacion-mes-anterior").innerHTML = compHTML;
+
+        // A) SALDOS BANCARIOS
+        const saldos = reporte.saldos;
+        const saldosHTML = `
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px;">Saldo Inicial</td>
+            <td style="padding:10px; text-align:right; font-weight:600;">${moneyARS(saldos.saldo_inicial)}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px;">Ingresos del Período</td>
+            <td style="padding:10px; text-align:right; font-weight:600; color:#4ade80;">+${moneyARS(saldos.ingresos_total)}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px;">Egresos del Período</td>
+            <td style="padding:10px; text-align:right; font-weight:600; color:#f87171;">-${moneyARS(saldos.egresos_total)}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px; font-weight:600;">Variación</td>
+            <td style="padding:10px; text-align:right; font-weight:700; color:${saldos.variacion >= 0 ? '#4ade80' : '#f87171'};">
+              ${saldos.variacion >= 0 ? '+' : ''}${moneyARS(saldos.variacion)}
+            </td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="padding:10px; font-weight:700;">Saldo Final</td>
+            <td style="padding:10px; text-align:right; font-weight:700; font-size:18px; color:${saldos.saldo_final >= 0 ? '#4ade80' : '#f87171'};">
+              ${moneyARS(saldos.saldo_final)}
+            </td>
+          </tr>
+        `;
+        document.getElementById("tabla-saldos").innerHTML = saldosHTML;
+
+        // B) CLASIFICACIÓN
+        const clas = reporte.clasificacion;
+        const clasificacionHTML = `
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px;">Total de Movimientos</td>
+            <td style="padding:10px; text-align:right; font-weight:600;">${clas.total_movimientos}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px;">Movimientos Clasificados</td>
+            <td style="padding:10px; text-align:right; font-weight:600; color:#4ade80;">${clas.clasificados}</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:10px;">Sin Clasificar</td>
+            <td style="padding:10px; text-align:right; font-weight:600; color:#f87171;">${clas.sin_clasificar}</td>
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03);">
+            <td style="padding:10px; font-weight:700;">Porcentaje Clasificado</td>
+            <td style="padding:10px; text-align:right; font-weight:700; font-size:18px; color:#4ade80;">
+              ${clas.pct_clasificados}%
+            </td>
+          </tr>
+        `;
+        document.getElementById("tabla-clasificacion").innerHTML = clasificacionHTML;
+
+        // C) DESGLOSE INGRESOS COMPLETO
+        const ingresosHTML = reporte.desglose_ingresos.length > 0
+          ? reporte.desglose_ingresos.map((item, i) => `
+              <tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:10px;">${item.categoria}</td>
+                <td style="padding:10px; text-align:right; font-weight:600; color:#4ade80;">${moneyARS(item.monto)}</td>
+              </tr>
+            `).join("")
+          : `<tr><td colspan="2" style="padding:10px; opacity:.6;">Sin ingresos en el período</td></tr>`;
+        document.getElementById("tabla-desglose-ingresos").innerHTML = ingresosHTML;
+
+        // D) DESGLOSE EGRESOS COMPLETO
+        const egresosHTML = reporte.desglose_egresos.length > 0
+          ? reporte.desglose_egresos.map((item, i) => `
+              <tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:10px;">${item.categoria}</td>
+                <td style="padding:10px; text-align:right; font-weight:600; color:#f87171;">${moneyARS(item.monto)}</td>
+              </tr>
+            `).join("")
+          : `<tr><td colspan="2" style="padding:10px; opacity:.6;">Sin egresos en el período</td></tr>`;
+        document.getElementById("tabla-desglose-egresos").innerHTML = egresosHTML;
+
+        // Top egresos (mantener para compatibilidad)
+        const topHTML = reporte.top_egresos_por_categoria.length > 0
+          ? reporte.top_egresos_por_categoria.map((item, i) => `
+              <div style="padding:10px; border-bottom:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between;">
+                  <span>${i + 1}. ${item.categoria}</span>
+                  <strong style="color:#f87171;">${moneyARS(item.total_egresos)}</strong>
+                </div>
+              </div>
+            `).join("")
+          : `<div style="opacity:.6;">Sin egresos en el período</div>`;
+        document.getElementById("top-egresos").innerHTML = topHTML;
+
+        // Últimos movimientos
+        const movHTML = reporte.ultimos_movimientos.length > 0
+          ? reporte.ultimos_movimientos.map(m => `
+              <div style="padding:10px; border-bottom:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; align-items:start;">
+                  <div>
+                    <div style="font-weight:600;">${m.descripcion}</div>
+                    <div style="font-size:12px; opacity:.7; margin-top:4px;">
+                      ${m.fecha} · ${m.categoria}
+                    </div>
+                  </div>
+                  <div style="font-weight:700; color:${m.monto > 0 ? '#4ade80' : '#f87171'};">
+                    ${moneyARS(m.monto)}
+                  </div>
+                </div>
+              </div>
+            `).join("")
+          : `<div style="opacity:.6;">Sin movimientos en el período</div>`;
+        document.getElementById("ultimos-movimientos").innerHTML = movHTML;
+
+        // Debug JSON
+        document.getElementById("debug-json").textContent = pretty(reporte);
+
+      } catch (err) {
+        alert(`Error cargando reporte: ${err.message}`);
+        console.error(err);
+      }
+    }
+
+    // Event listeners
+    document.getElementById("btn-cargar").addEventListener("click", cargarReporte);
+
+    // Cargar reporte inicial al cargar la página
+    // periodo-global.js ya se encarga de inicializar y sincronizar el selector
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Esperar un momento para que periodo-global.js inicialice primero
+      setTimeout(async () => {
+        await cargarReporte();
+      }, 100);
+    });
+
+    // Descargar PDF
+    document.getElementById("btn-descargar-pdf").addEventListener("click", () => {
+      const mesInput = document.getElementById("mes-selector").value;
+      const url = mesInput ? `/api/reportes/pdf?period=${mesInput}` : `/api/reportes/pdf`;
+      window.open(url, '_blank');
+    });
+
+    // Descargar Excel
+    document.getElementById("btn-descargar-excel").addEventListener("click", () => {
+      const mesInput = document.getElementById("mes-selector").value;
+      const url = mesInput ? `/api/movimientos/excel?period=${mesInput}` : `/api/movimientos/excel`;
+      window.open(url, '_blank');
+    });
+
+    // Descargar Excel Ejecutivo (5 hojas)
+    document.getElementById("btn-descargar-excel-ejecutivo").addEventListener("click", () => {
+      const mesInput = document.getElementById("mes-selector").value;
+      if (!mesInput) {
+        alert('Por favor selecciona un período primero');
+        return;
+      }
+      const url = `/api/reportes/excel?period=${mesInput}`;
+      window.open(url, '_blank');
+    });
+  </script>
+
+</body>
+</html>

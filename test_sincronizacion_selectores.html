@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sincronización de Selectores - TORO</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #555; font-size: 18px; }
+        .selector-group {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #666;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .status.pass {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .status.fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .log {
+            margin-top: 10px;
+            padding: 10px;
+            background: #1e1e1e;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 4px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-card">
+        <h1>🧪 Test de Sincronización de Selectores</h1>
+        <p>Este test verifica que los selectores de período se sincronicen correctamente en ambas direcciones.</p>
+    </div>
+
+    <div class="test-card">
+        <h2>Simulación de Navbar (Selector Global)</h2>
+        <div class="selector-group">
+            <label for="periodo-global-selector">📅 Periodo Global:</label>
+            <select id="periodo-global-selector">
+                <option value="">Todos los periodos</option>
+                <option value="2025-12">Dic 2025</option>
+                <option value="2025-11">Nov 2025</option>
+                <option value="2025-10">Oct 2025</option>
+                <option value="2024-12">Dic 2024</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>Simulación de Selector Interno (Reportes/Analytics)</h2>
+        <div class="selector-group">
+            <label for="mes-selector">📊 Selector Interno:</label>
+            <input type="month" id="mes-selector" />
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🔬 Pruebas Automáticas</h2>
+        <button onclick="runAllTests()">▶️ Ejecutar Todas las Pruebas</button>
+        <button onclick="clearLog()">🗑️ Limpiar Log</button>
+
+        <div id="status" class="status" style="display: none;"></div>
+        <div class="log" id="log"></div>
+    </div>
+
+    <script src="/static/js/periodo-global.js"></script>
+    <script>
+        const log = (msg, type = 'info') => {
+            const logEl = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const icon = type === 'pass' ? '✅' : type === 'fail' ? '❌' : type === 'test' ? '🧪' : 'ℹ️';
+            logEl.innerHTML += `<div class="log-entry">[${timestamp}] ${icon} ${msg}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(`[${type}] ${msg}`);
+        };
+
+        const clearLog = () => {
+            document.getElementById('log').innerHTML = '';
+            document.getElementById('status').style.display = 'none';
+        };
+
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        const assert = (condition, message) => {
+            if (!condition) {
+                log(`FAIL: ${message}`, 'fail');
+                throw new Error(message);
+            }
+            log(`PASS: ${message}`, 'pass');
+        };
+
+        // Test 1: Cambio en selector global actualiza selector interno
+        async function testGlobalToInternal() {
+            log('=== Test 1: Global → Interno ===', 'test');
+
+            const globalSel = document.getElementById('periodo-global-selector');
+            const internalSel = document.getElementById('mes-selector');
+
+            // Setear valor inicial diferente
+            globalSel.value = '2025-12';
+            internalSel.value = '2025-10';
+
+            log(`Inicial: Global=${globalSel.value}, Interno=${internalSel.value}`);
+
+            // Cambiar el selector global
+            globalSel.value = '2025-11';
+            globalSel.dispatchEvent(new Event('change'));
+
+            log('Cambió selector global a 2025-11');
+
+            // Esperar propagación del evento
+            await sleep(100);
+
+            assert(internalSel.value === '2025-11', 'Selector interno debe actualizarse a 2025-11');
+            log(`Final: Global=${globalSel.value}, Interno=${internalSel.value}`);
+        }
+
+        // Test 2: Cambio en selector interno actualiza selector global
+        async function testInternalToGlobal() {
+            log('=== Test 2: Interno → Global ===', 'test');
+
+            const globalSel = document.getElementById('periodo-global-selector');
+            const internalSel = document.getElementById('mes-selector');
+
+            // Setear valor inicial diferente
+            globalSel.value = '2025-12';
+            internalSel.value = '2025-10';
+
+            log(`Inicial: Global=${globalSel.value}, Interno=${internalSel.value}`);
+
+            // Cambiar el selector interno
+            internalSel.value = '2025-11';
+            PeriodoGlobal.setPeriodo(internalSel.value);
+
+            log('Cambió selector interno a 2025-11 y llamó setPeriodo()');
+
+            // Esperar propagación del evento
+            await sleep(100);
+
+            assert(globalSel.value === '2025-11', 'Selector global debe actualizarse a 2025-11');
+            log(`Final: Global=${globalSel.value}, Interno=${internalSel.value}`);
+        }
+
+        // Test 3: No debe haber desincronización
+        async function testNoDesync() {
+            log('=== Test 3: Verificar No Desincronización ===', 'test');
+
+            const globalSel = document.getElementById('periodo-global-selector');
+            const internalSel = document.getElementById('mes-selector');
+
+            // Test múltiples cambios rápidos
+            const valores = ['2025-12', '2025-11', '2025-10', '2024-12'];
+
+            for (const valor of valores) {
+                globalSel.value = valor;
+                globalSel.dispatchEvent(new Event('change'));
+                await sleep(50);
+
+                assert(internalSel.value === valor,
+                    `Después de cambiar global a ${valor}, interno debe ser ${valor}`);
+                log(`Sincronizado correctamente: ${valor}`);
+            }
+        }
+
+        // Test 4: localStorage persistence
+        async function testLocalStoragePersistence() {
+            log('=== Test 4: Persistencia en localStorage ===', 'test');
+
+            const testPeriodo = '2025-11';
+            PeriodoGlobal.setPeriodo(testPeriodo);
+
+            log(`setPeriodo('${testPeriodo}') llamado`);
+
+            const stored = localStorage.getItem('toro_periodo_seleccionado');
+            assert(stored === testPeriodo,
+                `localStorage debe contener '${testPeriodo}', encontró: '${stored}'`);
+
+            const retrieved = PeriodoGlobal.getPeriodo();
+            assert(retrieved === testPeriodo,
+                `getPeriodo() debe retornar '${testPeriodo}', retornó: '${retrieved}'`);
+        }
+
+        // Test 5: Evento periodoChanged se dispara siempre
+        async function testEventAlwaysFires() {
+            log('=== Test 5: Evento periodoChanged se dispara siempre ===', 'test');
+
+            let eventCount = 0;
+            const listener = (e) => {
+                eventCount++;
+                log(`Evento periodoChanged disparado #${eventCount}, periodo: ${e.detail.periodo}`);
+            };
+
+            window.addEventListener('periodoChanged', listener);
+
+            PeriodoGlobal.setPeriodo('2025-12');
+            await sleep(50);
+            PeriodoGlobal.setPeriodo('2025-11');
+            await sleep(50);
+            PeriodoGlobal.setPeriodo('2025-11'); // Mismo valor
+            await sleep(50);
+
+            window.removeEventListener('periodoChanged', listener);
+
+            assert(eventCount === 3,
+                `El evento debe dispararse 3 veces (incluso con mismo valor), se disparó ${eventCount} veces`);
+        }
+
+        // Ejecutar todas las pruebas
+        async function runAllTests() {
+            clearLog();
+            log('🚀 Iniciando batería de pruebas...', 'test');
+
+            const statusEl = document.getElementById('status');
+            statusEl.style.display = 'block';
+            statusEl.className = 'status';
+            statusEl.textContent = '⏳ Ejecutando pruebas...';
+
+            try {
+                await testGlobalToInternal();
+                await sleep(200);
+
+                await testInternalToGlobal();
+                await sleep(200);
+
+                await testNoDesync();
+                await sleep(200);
+
+                await testLocalStoragePersistence();
+                await sleep(200);
+
+                await testEventAlwaysFires();
+                await sleep(200);
+
+                log('🎉 ¡TODAS LAS PRUEBAS PASARON!', 'pass');
+                statusEl.className = 'status pass';
+                statusEl.textContent = '✅ TODAS LAS PRUEBAS PASARON';
+
+            } catch (error) {
+                log(`💥 Pruebas fallidas: ${error.message}`, 'fail');
+                statusEl.className = 'status fail';
+                statusEl.textContent = `❌ PRUEBAS FALLIDAS: ${error.message}`;
+            }
+        }
+
+        // Setup: Inicializar listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            log('📱 Sistema de sincronización inicializado');
+
+            const globalSel = document.getElementById('periodo-global-selector');
+            const internalSel = document.getElementById('mes-selector');
+
+            // Simular el comportamiento del navbar
+            globalSel.addEventListener('change', (e) => {
+                log(`[GLOBAL] Usuario cambió selector a: ${e.target.value}`);
+                PeriodoGlobal.setPeriodo(e.target.value);
+            });
+
+            // Simular el comportamiento de página interna
+            window.addEventListener('periodoChanged', (e) => {
+                const p = e.detail?.periodo ?? '';
+                log(`[EVENT] periodoChanged recibido: ${p}`);
+
+                // Sincronizar selectores (simulando el código real)
+                if (globalSel && globalSel.value !== p) {
+                    globalSel.value = p;
+                    log(`[SYNC] Global actualizado a: ${p}`);
+                }
+                if (internalSel && internalSel.value !== p) {
+                    internalSel.value = p;
+                    log(`[SYNC] Interno actualizado a: ${p}`);
+                }
+            });
+
+            log('✅ Listeners configurados correctamente');
+            log('👉 Presiona "Ejecutar Todas las Pruebas" para comenzar');
+        });
+    </script>
+</body>
+</html>

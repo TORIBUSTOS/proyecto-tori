@@ -1,0 +1,211 @@
+{
+  "version": "2.0",
+  "motor": "ClasificadorCascada",
+  "descripcion": "Reglas de refinamiento Nivel 2 - Sistema TORO · Resumen de Cuentas",
+  "fecha_actualizacion": "2025-11-27",
+  "reglas_refinamiento": {
+    "Gastos Operativos - Compras": {
+      "descripcion": "Refina compras genéricas según el detalle",
+      "patrones": [
+        {
+          "id": "REF-GAS-001",
+          "palabras_clave": ["aguas cordobesas", "aguascordobesas"],
+          "categoria_refinada": "Servicios - Agua",
+          "activo": true,
+          "notas": "Servicio de agua potable"
+        },
+        {
+          "id": "REF-GAS-002",
+          "palabras_clave": ["epec", "epeced", "pagos360*epec"],
+          "categoria_refinada": "Servicios - Electricidad",
+          "activo": true,
+          "notas": "Servicio eléctrico EPEC Córdoba"
+        },
+        {
+          "id": "REF-GAS-003",
+          "palabras_clave": ["gas del centro", "gascentro"],
+          "categoria_refinada": "Servicios - Gas",
+          "activo": true,
+          "notas": "Servicio de gas natural"
+        },
+        {
+          "id": "REF-GAS-004",
+          "palabras_clave": ["microsoft"],
+          "categoria_refinada": "Servicios - Software",
+          "activo": true,
+          "notas": "Microsoft 365, Azure, etc."
+        },
+        {
+          "id": "REF-GAS-005",
+          "palabras_clave": ["openai", "chatgpt"],
+          "categoria_refinada": "Servicios - Software",
+          "activo": true,
+          "notas": "OpenAI API/ChatGPT"
+        },
+        {
+          "id": "REF-GAS-006",
+          "palabras_clave": ["google gsuite", "google workspace", "google one", "youtube"],
+          "categoria_refinada": "Servicios - Software",
+          "activo": true,
+          "notas": "Servicios Google"
+        },
+        {
+          "id": "REF-GAS-007",
+          "palabras_clave": ["netflix", "spotify", "hbo"],
+          "categoria_refinada": "Servicios - Entretenimiento",
+          "activo": true,
+          "notas": "Plataformas de streaming"
+        },
+        {
+          "id": "REF-GAS-008",
+          "palabras_clave": ["hosting", "godaddy", "aws", "cloud"],
+          "categoria_refinada": "Servicios - Hosting/IT",
+          "activo": true,
+          "notas": "Servicios de hosting y cloud"
+        },
+        {
+          "id": "REF-GAS-009",
+          "palabras_clave": ["pedidosya", "rappi"],
+          "categoria_refinada": "Gastos Operativos - Viáticos",
+          "activo": true,
+          "notas": "Delivery de comida"
+        },
+        {
+          "id": "REF-GAS-010",
+          "palabras_clave": ["uber", "cabify"],
+          "categoria_refinada": "Gastos Operativos - Movilidad",
+          "activo": true,
+          "notas": "Transporte/movilidad"
+        },
+        {
+          "id": "REF-GAS-011",
+          "palabras_clave": ["merpago", "mercadopago", "mercadolibre"],
+          "categoria_refinada": "Gastos Operativos - Compras ML",
+          "activo": true,
+          "notas": "Compras en Mercado Libre/Pago"
+        }
+      ],
+      "categoria_default": "Gastos Operativos - Compras Varias"
+    },
+    "Egresos - Transferencias": {
+      "descripcion": "Refina transferencias según el destinatario",
+      "patrones": [
+        {
+          "id": "REF-EGR-001",
+          "palabras_clave": ["farmacia", "farmacias lider"],
+          "categoria_refinada": "Prestadores - Farmacias",
+          "activo": true,
+          "notas": "Farmacias"
+        },
+        {
+          "id": "REF-EGR-002",
+          "palabras_clave": ["laboratorio"],
+          "categoria_refinada": "Prestadores - Laboratorios",
+          "activo": true,
+          "notas": "Laboratorios de análisis clínicos"
+        },
+        {
+          "id": "REF-EGR-003",
+          "palabras_clave": ["clinica", "sanatorio", "aclinor"],
+          "categoria_refinada": "Prestadores - Clínicas",
+          "activo": true,
+          "notas": "Clínicas y sanatorios"
+        },
+        {
+          "id": "REF-EGR-004",
+          "palabras_clave": ["dr.", "dra."],
+          "categoria_refinada": "Prestadores - Profesionales",
+          "activo": true,
+          "notas": "Profesionales de la salud"
+        },
+        {
+          "id": "REF-EGR-005",
+          "palabras_clave": [
+            "tosin", "plizzo", "tosca", "bernardi", "lopez", "tura", "decade",
+            "frandino", "picatto", "diaz gustavo", "cabrera", "ghiglione",
+            "figueroa", "caballi", "gorosito", "lezcano", "marengo", "pizzichini",
+            "gentile", "sosa", "bonaldi", "cuevas", "roda"
+          ],
+          "categoria_refinada": "Prestadores - Profesionales",
+          "activo": true,
+          "notas": "Prestadores conocidos por apellido"
+        },
+        {
+          "id": "REF-EGR-006",
+          "palabras_clave": ["municipalidad", "municipio"],
+          "categoria_refinada": "Impuestos - Municipal",
+          "activo": true,
+          "notas": "Pagos municipales"
+        },
+        {
+          "id": "REF-EGR-007",
+          "palabras_clave": ["afip"],
+          "categoria_refinada": "Impuestos - AFIP",
+          "activo": true,
+          "notas": "Pagos a AFIP"
+        },
+        {
+          "id": "REF-EGR-008",
+          "palabras_clave": ["arba"],
+          "categoria_refinada": "Impuestos - ARBA",
+          "activo": true,
+          "notas": "ARBA Buenos Aires"
+        }
+      ],
+      "categoria_default": "Egresos - Transferencias Varias"
+    },
+    "Servicios - Varios": {
+      "descripcion": "Refina servicios genéricos",
+      "patrones": [
+        {
+          "id": "REF-SRV-001",
+          "palabras_clave": ["aguas cordobesas"],
+          "categoria_refinada": "Servicios - Agua",
+          "activo": true,
+          "notas": "Servicio de agua"
+        },
+        {
+          "id": "REF-SRV-002",
+          "palabras_clave": ["epec", "epeced"],
+          "categoria_refinada": "Servicios - Electricidad",
+          "activo": true,
+          "notas": "Servicio eléctrico"
+        },
+        {
+          "id": "REF-SRV-003",
+          "palabras_clave": ["gas"],
+          "categoria_refinada": "Servicios - Gas",
+          "activo": true,
+          "notas": "Servicio de gas"
+        },
+        {
+          "id": "REF-SRV-004",
+          "palabras_clave": ["afip"],
+          "categoria_refinada": "Impuestos - AFIP",
+          "activo": true,
+          "notas": "Pago AFIP vía servicios"
+        }
+      ],
+      "categoria_default": "Servicios - Varios"
+    },
+    "Ingresos - Transferencias": {
+      "descripcion": "Refina ingresos por transferencia",
+      "patrones": [
+        {
+          "id": "REF-ING-001",
+          "palabras_clave": ["obra soc", "obra social"],
+          "categoria_refinada": "Ingresos - Obras Sociales",
+          "activo": true,
+          "notas": "Pagos de obras sociales"
+        }
+      ],
+      "categoria_default": "Ingresos - Transferencias"
+    }
+  },
+  "notas_tecnicas": {
+    "busqueda": "Búsqueda case-insensitive en campo DETALLE (uppercase)",
+    "palabras_clave": "Lista de strings a buscar. Si cualquiera coincide, aplica la regla",
+    "categoria_default": "Se usa si ningún patrón coincide",
+    "activo": "Si false, el patrón se ignora"
+  }
+}

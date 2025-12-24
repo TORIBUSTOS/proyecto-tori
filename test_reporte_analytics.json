@@ -1,0 +1,125 @@
+{
+  "periodo": "2025-11",
+  "kpis": {
+    "ingresos_total": 40277564.83,
+    "egresos_total": 26684132.64,
+    "saldo_neto": 13593432.19,
+    "cantidad_movimientos": 521,
+    "categorias_activas": 3
+  },
+  "saldos": {
+    "saldo_inicial": 1336671.62,
+    "ingresos_total": 40277564.83,
+    "egresos_total": 26684132.64,
+    "variacion": 13593432.19,
+    "saldo_final": 14930103.81
+  },
+  "clasificacion": {
+    "total_movimientos": 521,
+    "clasificados": 521,
+    "sin_clasificar": 0,
+    "pct_clasificados": 100.0
+  },
+  "desglose_ingresos": [
+    {
+      "categoria": "OTROS",
+      "monto": 40277564.83
+    }
+  ],
+  "desglose_egresos": [
+    {
+      "categoria": "OTROS",
+      "monto": 22834434.76
+    },
+    {
+      "categoria": "EGRESOS",
+      "monto": 2867886.25
+    },
+    {
+      "categoria": "INGRESOS",
+      "monto": 981811.63
+    }
+  ],
+  "top_egresos_por_categoria": [
+    {
+      "categoria": "OTROS",
+      "total_egresos": 22834434.76
+    },
+    {
+      "categoria": "EGRESOS",
+      "total_egresos": 2867886.25
+    },
+    {
+      "categoria": "INGRESOS",
+      "total_egresos": 981811.63
+    }
+  ],
+  "ultimos_movimientos": [
+    {
+      "fecha": "2025-11-30",
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 982948",
+      "monto": -400.0,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-30",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -2.4,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PedidosYa*Mar OPERACION: 076341",
+      "monto": -15505.0,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -93.03,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PedidosYa*Maxikiosco La OPERACION: 073601",
+      "monto": -36204.0,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -217.22,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 127362",
+      "monto": -650.0,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -3.9,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 124692",
+      "monto": -600.0,
+      "categoria": "EGRESOS"
+    },
+    {
+      "fecha": "2025-11-29",
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -3.6,
+      "categoria": "EGRESOS"
+    }
+  ],
+  "comparacion_mes_anterior": {
+    "ingresos_total_anterior": 22827126.31,
+    "egresos_total_anterior": 19612632.86,
+    "saldo_neto_anterior": 3214493.45,
+    "variacion_saldo_pct": 322.88
+  }
+}

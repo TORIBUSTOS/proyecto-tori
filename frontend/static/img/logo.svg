@@ -1,0 +1,18 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Toro estilizado (icono) -->
+  <g transform="translate(5, 8)">
+    <!-- Cabeza del toro -->
+    <path d="M12 4 L12 20 L24 20 L24 4 Z" fill="#3b82f6" opacity="0.9"/>
+    <!-- Cuernos -->
+    <path d="M8 4 L12 4 L12 0" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M24 4 L24 0 L28 4" stroke="#3b82f6" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- Ojos -->
+    <circle cx="15" cy="10" r="1.5" fill="white"/>
+    <circle cx="21" cy="10" r="1.5" fill="white"/>
+    <!-- Nariz/hocico -->
+    <rect x="16" y="14" width="4" height="3" rx="1" fill="white" opacity="0.8"/>
+  </g>
+
+  <!-- Texto "TORO" -->
+  <text x="42" y="26" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1e293b">TORO</text>
+</svg>

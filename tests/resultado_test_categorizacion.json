@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "motor": "CategorizadorCascada v2.0",
+  "fecha_test": "2025-12-16",
+  "dataset": "tests/dataset_prueba.json",
+  "metricas": {
+    "total_movimientos": 8,
+    "categorizados": 8,
+    "sin_categoria": 0,
+    "cobertura_porcentaje": 100.0,
+    "refinados_nivel2": 8,
+    "tasa_refinamiento_porcentaje": 100.0,
+    "confianza_promedio": 93.75
+  },
+  "criterios_exito": {
+    "Cobertura > 90%": {
+      "cumple": true,
+      "valor": "100.0%"
+    },
+    "Confianza promedio > 80%": {
+      "cumple": true,
+      "valor": "93.8%"
+    },
+    "Tasa refinamiento > 60%": {
+      "cumple": true,
+      "valor": "100.0%"
+    },
+    "Sin categoria < 10%": {
+      "cumple": true,
+      "valor": "0/8"
+    }
+  },
+  "resultados": [
+    {
+      "id": 1,
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -2.4,
+      "categoria": "EGRESOS",
+      "subcategoria": "Impuestos_Debitos_Creditos",
+      "confianza": 100
+    },
+    {
+      "id": 2,
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 982948",
+      "monto": -400.0,
+      "categoria": "EGRESOS",
+      "subcategoria": "Gastos_Viaticos",
+      "confianza": 90
+    },
+    {
+      "id": 3,
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -51.24,
+      "categoria": "EGRESOS",
+      "subcategoria": "Impuestos_Debitos_Creditos",
+      "confianza": 100
+    },
+    {
+      "id": 4,
+      "descripcion": "Compra Visa Débito - COMERCIO: PedidosYa*Grido Helados OPERACION: 860161",
+      "monto": -8540.0,
+      "categoria": "EGRESOS",
+      "subcategoria": "Gastos_Viaticos",
+      "confianza": 90
+    },
+    {
+      "id": 5,
+      "descripcion": "Impuesto Débitos y Créditos/DB",
+      "monto": -177.0,
+      "categoria": "EGRESOS",
+      "subcategoria": "Impuestos_Debitos_Creditos",
+      "confianza": 100
+    },
+    {
+      "id": 8,
+      "descripcion": "Compra Visa Débito - COMERCIO: OPENAI *CHATGPT SUBSCR OPERACION: 779574",
+      "monto": -29500.0,
+      "categoria": "EGRESOS",
+      "subcategoria": "Servicios_Software",
+      "confianza": 90
+    },
+    {
+      "id": 10,
+      "descripcion": "Compra Visa Débito - COMERCIO: PEDIDOSYA PROPINAS OPERACION: 683488",
+      "monto": -650.0,
+      "categoria": "EGRESOS",
+      "subcategoria": "Gastos_Viaticos",
+      "confianza": 90
+    },
+    {
+      "id": 12,
+      "descripcion": "Compra Visa Débito - COMERCIO: PedidosYa*Mar OPERACION: 589171",
+      "monto": -34033.45,
+      "categoria": "EGRESOS",
+      "subcategoria": "Gastos_Viaticos",
+      "confianza": 90
+    }
+  ]
+}

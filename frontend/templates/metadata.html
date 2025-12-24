@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metadata de Movimientos - TORO</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <link rel="stylesheet" href="/static/css/header.css">
+  <style>
+    /* Modal para detalles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 9998;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 9999;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      color: #1e293b;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #64748b;
+    }
+
+    .modal-close:hover {
+      color: #1e293b;
+    }
+
+    .detail-row {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      color: #1e293b;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    /* Filtros toolbar mejorado */
+    .filters-container {
+      background: rgba(255,255,255,0.04);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .filter-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    select, input[type="text"] {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      min-width: 150px;
+    }
+
+    input[type="text"] {
+      min-width: 250px;
+    }
+
+    /* Cursores para celdas clickeables - SOLO para descripción */
+    td.clickable-descripcion {
+      cursor: pointer;
+      color: #3b82f6;
+      text-decoration: underline;
+    }
+
+    td.clickable-descripcion:hover {
+      background: rgba(59, 130, 246, 0.1);
+      color: #2563eb;
+    }
+
+    /* Icono de búsqueda en descripción */
+    .search-icon {
+      margin-right: 6px;
+      opacity: 0.7;
+    }
+
+    /* Botones de acción */
+    .btn-action {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: #3b82f6;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      border-color: #1d4ed8;
+    }
+
+    /* Modal de confirmación */
+    .confirmation-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      max-width: 500px;
+      width: 90%;
+      z-index: 10001;
+      display: none;
+    }
+
+    .confirmation-modal h3 {
+      margin: 0 0 12px 0;
+      color: #1e293b;
+      font-size: 18px;
+    }
+
+    .confirmation-modal p {
+      margin: 0 0 20px 0;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .confirmation-modal .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .confirmation-modal button {
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-cancel {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    .btn-cancel:hover {
+      background: #cbd5e1;
+    }
+
+    .btn-confirm {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+    }
+
+    .btn-confirm:hover {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    }
+
+    /* =======================================================
+       MODAL EDITAR CATEGORIZACIÓN - DARK (FIX REAL)
+       ======================================================= */
+
+    /* Modal dark */
+    .modal .modal-content {
+      background: #0b1220 !important;
+      color: #e5e7eb !important;
+      border: 1px solid rgba(255,255,255,0.08) !important;
+    }
+
+    .modal .modal-header {
+      border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    }
+
+    .modal .modal-footer {
+      border-top: 1px solid rgba(255,255,255,0.08) !important;
+    }
+
+    /* Labels */
+    .modal label,
+    .modal .form-label,
+    .confirmation-modal label {
+      color: rgba(229,231,235,0.85) !important;
+    }
+
+    /* Select cerrado (esto sí se aplica) */
+    .modal select,
+    .modal .form-select,
+    .confirmation-modal select {
+      background-color: #0f172a !important;
+      color: #e5e7eb !important;
+      border: 1px solid rgba(255,255,255,0.14) !important;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    /* Focus */
+    .modal select:focus,
+    .modal .form-select:focus,
+    .confirmation-modal select:focus {
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.25) !important;
+      border-color: rgba(59,130,246,0.55) !important;
+    }
+
+    /* Intento de options (algunos navegadores lo ignoran, pero no molesta) */
+    .modal select option,
+    .confirmation-modal select option {
+      background: #0b1220 !important;
+      color: #e5e7eb !important;
+    }
+
+    /* Toast de notificación */
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      padding: 16px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 10002;
+      display: none;
+      max-width: 400px;
+    }
+
+    .toast.success {
+      border-left: 4px solid #10b981;
+    }
+
+    .toast.error {
+      border-left: 4px solid #ef4444;
+    }
+
+    .toast-title {
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+
+    .toast-message {
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    /* =======================================================
+       QUALITY PANEL – DARK MODE CON ALTO CONTRASTE
+       ======================================================= */
+
+    /* Base común del panel */
+    .stats-panel {
+      background: #0f172a;          /* azul gris oscuro */
+      color: #e5e7eb;               /* texto claro */
+      border-radius: 10px;
+      padding: 16px;
+      border-left: 6px solid #334155;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      margin-bottom: 16px;
+      display: none; /* Oculto por defecto, se muestra cuando hay datos */
+    }
+
+    .stats-panel.visible {
+      display: block;
+    }
+
+    /* Estados del panel (tinte + borde) */
+    .stats-panel.quality-good {
+      background: linear-gradient(135deg, #0f172a 70%, rgba(34,197,94,0.12));
+      border-left-color: #22c55e;
+    }
+
+    .stats-panel.quality-warning {
+      background: linear-gradient(135deg, #0f172a 70%, rgba(250,204,21,0.14));
+      border-left-color: #facc15;
+    }
+
+    .stats-panel.quality-bad {
+      background: linear-gradient(135deg, #0f172a 70%, rgba(239,68,68,0.16));
+      border-left-color: #ef4444;
+    }
+
+    .stats-panel.quality-neutral {
+      background: #0f172a;
+      border-left-color: #64748b;
+    }
+
+    /* Título del panel */
+    .stats-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5f5;               /* bien legible */
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Grid de stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    /* Cards individuales de stats */
+    .stat-item {
+      background: rgba(15, 23, 42, 0.6);
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Label de cada stat */
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    /* Valor principal */
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #f9fafb;
+    }
+
+    .stat-value.good {
+      color: #22c55e;
+    }
+
+    .stat-value.warning {
+      color: #facc15;
+    }
+
+    .stat-value.danger {
+      color: #ef4444;
+    }
+
+    /* Subtexto */
+    .stat-detail {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 2px;
+      color: #cbd5e1;
+    }
+
+    /* Celdas editables de categoría/subcategoría */
+    .editable-category {
+      cursor: pointer;
+      transition: background-color 0.2s;
+      position: relative;
+    }
+
+    .editable-category:hover {
+      background-color: rgba(59, 130, 246, 0.08);
+    }
+
+    .editable-category:hover::after {
+      content: " ✏️";
+      opacity: 0.7;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    /* =======================================================
+       TABLA METADATA - COLUMNAS ANCHAS (FIX v2.3.1)
+       ======================================================= */
+
+    /* Forzar que el colgroup mande (table-layout: fixed) */
+    #metadata-table {
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    /* Ellipsis por defecto en todas las celdas */
+    #metadata-table th,
+    #metadata-table td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* Columnas CLAVE mantienen nowrap pero con más ancho real (520px, 220px, 320px) */
+    /* Descripción (col 3), Categoría (col 4), Subcategoría (col 5) */
+    #metadata-table td:nth-child(3),
+    #metadata-table th:nth-child(3),
+    #metadata-table td:nth-child(4),
+    #metadata-table th:nth-child(4),
+    #metadata-table td:nth-child(5),
+    #metadata-table th:nth-child(5) {
+      white-space: nowrap;
+      font-weight: 500; /* Destacar un poco más */
+    }
+
+    /* Headers de columnas clave más destacados */
+    #metadata-table th:nth-child(3),
+    #metadata-table th:nth-child(4),
+    #metadata-table th:nth-child(5) {
+      background: rgba(59, 130, 246, 0.08);
+      font-weight: 600;
+    }
+
+    /* Badges para Tipo de Movimiento (INGRESO/EGRESO/NEUTRO) */
+    .badge-tipo {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .badge-ingreso {
+      background: rgba(34, 197, 94, 0.18);
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      color: #bbf7d0;
+    }
+
+    .badge-egreso {
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fecaca;
+    }
+
+    .badge-neutro {
+      background: rgba(148, 163, 184, 0.16);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header común -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-left">
+        <a href="/" class="brand" data-toro-nav="1">
+          <img src="/static/img/brand/logo-toro-navbar-clean.png" alt="TORO" class="logo-toro-navbar">
+          <div class="brand-text">
+            <div class="brand-title">Investment Manager</div>
+            <div class="brand-subtitle">Gestión Financiera Inteligente</div>
+          </div>
+        </a>
+      </div>
+
+      <nav class="header-nav">
+        <div class="header-periodo">
+          <label for="periodo-global">📅 Periodo:</label>
+          <select id="periodo-global">
+            <option value="">Todos los periodos</option>
+          </select>
+        </div>
+        <a href="/" class="nav-link" data-toro-nav="1">📊 Dashboard</a>
+        <a href="/reportes" class="nav-link" data-toro-nav="1">📈 Reportes</a>
+        <a href="/analytics" class="nav-link" data-toro-nav="1">📉 Analytics</a>
+        <a href="/configuracion" class="nav-link" data-toro-nav="1">⚙️ Configuración</a>
+        <a href="/metadata" class="nav-link active" data-toro-nav="1">🔍 Metadata</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="page-header">
+      <h1>Metadata de Movimientos</h1>
+      <p class="muted">Vista de auditoría y trazabilidad de datos extraídos</p>
+    </section>
+
+    <section class="table-shell">
+      <!-- Filtros extendidos -->
+      <div class="filters-container">
+        <!-- Fila 1: Vista, Archivo, Búsqueda -->
+        <div class="filter-row">
+          <div class="filter-group">
+            <label class="filter-label" for="vistaSelect">Vista:</label>
+            <select id="vistaSelect">
+              <option value="mes">Mes actual</option>
+              <option value="all">Todo lo cargado</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="batchSelect">Archivo:</label>
+            <select id="batchSelect">
+              <option value="">Todos</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="filtroTipo">Tipo:</label>
+            <select id="filtroTipo">
+              <option value="all">Todos</option>
+              <option value="INGRESO">Ingresos</option>
+              <option value="EGRESO">Egresos</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="buscarInput">🔍 Buscar:</label>
+            <input type="text" id="buscarInput" placeholder="Nombre, CUIT, descripción, referencia...">
+          </div>
+        </div>
+
+        <!-- Fila 2: Checkboxes de filtros -->
+        <div class="filter-row">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="filter_con_metadata">
+            <span>Con Metadata</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="filter_con_debin">
+            <span>Con DEBIN</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="filter_con_documento">
+            <span>Con Documento</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+            <input type="checkbox" id="filter_con_nombre">
+            <span>Con Nombre</span>
+          </label>
+          <button id="btnActualizar" class="btn-action">
+            🔄 Actualizar
+          </button>
+          <button id="btnAplicarReglas" class="btn-action btn-primary">
+            ⚡ Aplicar Reglas
+          </button>
+        </div>
+      </div>
+
+      <div id="error" style="display: none; background: #fee; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 12px;"></div>
+      <div id="loading" style="text-align: center; padding: 40px; color: var(--muted);">Cargando movimientos...</div>
+      <div id="empty" style="display: none; text-align: center; padding: 40px; color: var(--muted);">
+        No hay movimientos que coincidan con los filtros seleccionados.
+      </div>
+
+      <!-- Panel de estadísticas de confianza -->
+      <div class="stats-panel" id="stats-panel">
+        <div class="stats-title">
+          📊 Calidad de Categorización
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Confianza Promedio</div>
+            <div class="stat-value" id="statsPromedio">-</div>
+            <div class="stat-detail">Sobre <span id="statsTotal">0</span> movimientos</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Sin Confianza</div>
+            <div class="stat-value danger" id="statsSin">0</div>
+            <div class="stat-detail" id="statsSinPct">0%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Confianza 0%</div>
+            <div class="stat-value danger" id="statsCero">0</div>
+            <div class="stat-detail" id="statsCeroPct">0%</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">Confianza Baja (&lt;50%)</div>
+            <div class="stat-value warning" id="statsBaja">0</div>
+            <div class="stat-detail" id="statsBajaPct">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container" id="table-container" style="display: none;">
+        <table id="metadata-table" class="table table-metadata">
+          <!-- Colgroup para forzar anchos de columnas (tabla más legible) -->
+          <colgroup>
+            <col style="width: 110px;">  <!-- Fecha -->
+            <col style="width: 120px;">  <!-- Monto -->
+            <col style="width: 100px;">  <!-- Tipo (NUEVO - INGRESO/EGRESO) -->
+            <col style="width: 520px;">  <!-- Descripción (CLAVE - MÁS ANCHA) -->
+            <col style="width: 220px;">  <!-- Categoría (CLAVE - MÁS ANCHA) -->
+            <col style="width: 320px;">  <!-- Subcategoría (CLAVE - MÁS ANCHA) -->
+            <col style="width: 90px;">   <!-- Conf.% -->
+            <col style="width: 180px;">  <!-- Nombre -->
+            <col style="width: 160px;">  <!-- Documento -->
+            <col style="width: 90px;">   <!-- DEBIN -->
+            <col style="width: 150px;">  <!-- DEBIN ID -->
+            <col style="width: 160px;">  <!-- CBU -->
+            <col style="width: 140px;">  <!-- Comercio -->
+            <col style="width: 120px;">  <!-- Terminal -->
+            <col style="width: 140px;">  <!-- Referencia -->
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="short">Fecha</th>
+              <th class="short">Monto</th>
+              <th class="short">Tipo</th>
+              <th class="long">Descripción</th>
+              <th>Categoría</th>
+              <th>Subcategoría</th>
+              <th class="short">Conf.%</th>
+              <th class="long">Nombre</th>
+              <th>Documento</th>
+              <th class="short">DEBIN</th>
+              <th>DEBIN ID</th>
+              <th>CBU</th>
+              <th>Comercio</th>
+              <th>Terminal</th>
+              <th>Referencia</th>
+            </tr>
+          </thead>
+          <tbody id="movimientos-tbody">
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para ver detalles completos -->
+  <div class="modal-overlay" id="modalOverlay"></div>
+  <div class="modal" id="modalDetalle">
+    <button class="modal-close" id="modalClose">&times;</button>
+    <h3 id="modalTitle">Detalle del Movimiento</h3>
+    <div id="modalContent"></div>
+  </div>
+
+  <!-- Modal de confirmación para aplicar reglas -->
+  <div class="modal-overlay" id="confirmOverlay"></div>
+  <div class="confirmation-modal" id="confirmModal">
+    <h3>⚡ Aplicar Reglas de Categorización</h3>
+    <p id="confirmMessage">¿Desea recategorizar los movimientos según los filtros actuales?</p>
+    <div id="confirmDetails" style="background: #f8fafc; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; color: #475569;"></div>
+    <div class="buttons">
+      <button class="btn-cancel" id="btnCancelarReglas">Cancelar</button>
+      <button class="btn-confirm" id="btnConfirmarReglas">Aplicar Reglas</button>
+    </div>
+  </div>
+
+  <!-- Modal de edición de categoría -->
+  <div class="modal-overlay" id="editOverlay"></div>
+  <div class="confirmation-modal" id="editModal" style="max-width: 600px;">
+    <h3>✏️ Editar Categorización</h3>
+    <div style="margin-bottom: 16px;">
+      <label style="display: block; margin-bottom: 8px;">Categoría</label>
+      <select id="editCategoria" style="width: 100%; padding: 10px; border-radius: 6px; font-size: 14px;">
+        <option value="">Seleccionar...</option>
+      </select>
+    </div>
+    <div style="margin-bottom: 16px;">
+      <label style="display: block; margin-bottom: 8px;">Subcategoría</label>
+      <select id="editSubcategoria" style="width: 100%; padding: 10px; border-radius: 6px; font-size: 14px;">
+        <option value="">Seleccionar...</option>
+      </select>
+    </div>
+    <div class="buttons">
+      <button class="btn-cancel" id="btnCancelarEdit">Cancelar</button>
+      <button class="btn-confirm" id="btnGuardarEdit">Guardar</button>
+    </div>
+  </div>
+
+  <!-- Toast de notificación -->
+  <div class="toast" id="toast">
+    <div class="toast-title" id="toastTitle"></div>
+    <div class="toast-message" id="toastMessage"></div>
+  </div>
+
+  <script src="/static/js/periodo-global.js"></script>
+  <script>
+    const API_URL = '/api';
+    let debounceTimer = null;
+    let movimientoEditando = null;
+
+    // Categorías y subcategorías disponibles (igual que app.js)
+    const CATEGORIAS = {
+      "INGRESOS": {
+        "Ingresos - Transferencias": "Transferencias",
+        "Ingresos - Transferencias Operativas": "Transferencias Operativas",
+        "Ingresos - DEBIN Afiliados": "DEBIN Afiliados",
+        "Ingresos - DEBIN Clientes": "DEBIN Clientes",
+        "Ingresos - Tarjetas": "Tarjetas",
+        "Ingresos - Ajustes / Devoluciones": "Ajustes / Devoluciones"
+      },
+      "EGRESOS": {
+        "Prestadores_Farmacias": "Prestadores Farmacias",
+        "Prestadores_Sanatorios": "Prestadores Sanatorios",
+        "Prestadores_Profesionales": "Prestadores Profesionales",
+        "Sueldos": "Sueldos",
+        "Gastos_Operativos": "Gastos Operativos",
+        "Egresos - Transferencias": "Transferencias",
+        "Egresos - Transferencias a Terceros": "Transferencias a Terceros",
+        "Egresos - DEBIN Pagos": "DEBIN Pagos",
+        "Egresos - Ajustes": "Ajustes"
+      },
+      "IMPUESTOS": {
+        "Impuestos - Débitos y Créditos": "Débitos y Créditos",
+        "Impuestos - IVA": "IVA",
+        "Impuestos - IIBB": "IIBB",
+        "Impuestos - AFIP": "AFIP",
+        "Impuestos - Percepciones": "Percepciones",
+        "Impuestos - Devoluciones": "Devoluciones"
+      },
+      "GASTOS_OPERATIVOS": {
+        "Gastos Operativos - Compras": "Compras",
+        "Gastos Operativos - Viáticos": "Viáticos",
+        "Gastos Operativos - Compras Marketplace": "Compras Marketplace",
+        "Gastos Operativos - Insumos": "Insumos"
+      },
+      "COMISIONES_BANCARIAS": {
+        "Comisiones Bancarias - Transferencias": "Transferencias",
+        "Comisiones Bancarias - Cheques": "Cheques",
+        "Comisiones Bancarias - Mantenimiento": "Mantenimiento",
+        "Comisiones Bancarias - Otras": "Otras"
+      },
+      "PRESTADORES": {
+        "Prestadores - Servicios": "Servicios",
+        "Prestadores - Profesionales": "Profesionales",
+        "Prestadores - Servicios Recurrentes": "Servicios Recurrentes",
+        "Prestadores - Pagos Eventuales": "Pagos Eventuales"
+      },
+      "OTROS": {
+        "Sin_Clasificar": "Sin Clasificar"
+      }
+    };
+
+    // 🔴 FIX FINAL: Función utilitaria para obtener período de forma robusta
+    function obtenerPeriodoActualSeguro() {
+      // 1) Intentar PeriodoGlobal (ideal)
+      if (window.PeriodoGlobal && typeof window.PeriodoGlobal.getPeriodo === 'function') {
+        const periodo = window.PeriodoGlobal.getPeriodo();
+        if (periodo) {
+          return periodo;
+        }
+      }
+
+      // 2) Fallback: leer directamente el selector del navbar
+      const selector = document.getElementById('periodo-global');
+      if (selector && selector.value) {
+        console.warn('[metadata] PeriodoGlobal no listo, usando fallback del DOM:', selector.value);
+        return selector.value;
+      }
+
+      // 3) Nada disponible → error real
+      return null;
+    }
+
+    // Función para cargar batches/archivos
+    async function cargarBatches() {
+      try {
+        const response = await fetch(`${API_URL}/batches`);
+        const data = await response.json();
+
+        const batchSelect = document.getElementById('batchSelect');
+        batchSelect.innerHTML = '<option value="">Todos</option>';
+
+        if (data.batches && data.batches.length > 0) {
+          data.batches.forEach(batch => {
+            const option = document.createElement('option');
+            option.value = batch.id;
+            option.textContent = `${batch.filename} (${batch.created_at})`;
+            batchSelect.appendChild(option);
+          });
+        }
+      } catch (err) {
+        console.error('Error cargando batches:', err);
+      }
+    }
+
+    // --- CATALOGO LABELS (MVP) ---
+    let CAT_LABEL = {};
+    let SUB_LABEL = {};
+
+    async function cargarCatalogoLabels() {
+      try {
+        const r = await fetch('/api/categorias/tree');
+        const data = await r.json();
+        const cats = data.categorias || [];
+
+        CAT_LABEL = {};
+        SUB_LABEL = {};
+
+        for (const c of cats) {
+          if (c.key) CAT_LABEL[c.key] = c.label || c.key;
+          for (const s of (c.subcategorias || [])) {
+            if (s.key) SUB_LABEL[s.key] = s.label || s.key;
+          }
+        }
+      } catch (e) {
+        console.warn('[metadata] No se pudo cargar catálogo labels', e);
+      }
+    }
+
+    function _prettifyFallback(raw) {
+      if (!raw) return '-';
+      return String(raw)
+        .replaceAll('_', ' ')
+        .replaceAll('-', ' ')
+        .toLowerCase()
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function labelCategoria(key) {
+      if (!key) return '-';
+      return CAT_LABEL[key] || _prettifyFallback(key);
+    }
+
+    function labelSub(subVal) {
+      if (!subVal) return '-';
+      const raw = String(subVal);
+
+      // si viene como "Impuestos - IVA", mostrar solo lo último
+      if (raw.includes(' - ')) return raw.split(' - ').pop().trim();
+
+      return SUB_LABEL[raw] || _prettifyFallback(raw);
+    }
+
+    // Función principal para cargar movimientos
+    async function cargarMovimientos() {
+      const loading = document.getElementById('loading');
+      const empty = document.getElementById('empty');
+      const tableContainer = document.getElementById('table-container');
+      const error = document.getElementById('error');
+      const tbody = document.getElementById('movimientos-tbody');
+
+      // Mostrar loading
+      loading.style.display = 'block';
+      empty.style.display = 'none';
+      tableContainer.style.display = 'none';
+      error.style.display = 'none';
+
+      try {
+        // Construir URL con query params
+        const params = [];
+
+        // Determinar mes según vista seleccionada
+        const vista = document.getElementById('vistaSelect').value;
+        if (vista === 'all') {
+          params.push('mes=all');
+        } else {
+          // 🔴 FIX FINAL: Usar función robusta con fallback
+          const periodo = obtenerPeriodoActualSeguro();
+
+          if (!periodo) {
+            console.warn('[metadata] No se pudo obtener el período, esperando selección del usuario');
+            loading.style.display = 'none';
+            empty.style.display = 'block';
+            // NO mostrar error rojo, solo estado vacío mientras se espera
+            return;
+          }
+
+          console.log(`[metadata] Cargando con período: ${periodo}`);
+          params.push(`mes=${periodo}`);
+        }
+
+        // Batch/Archivo
+        const batchId = document.getElementById('batchSelect').value;
+        if (batchId) {
+          params.push(`batch_id=${batchId}`);
+        }
+
+        // Búsqueda libre
+        const q = document.getElementById('buscarInput').value.trim();
+        if (q) {
+          params.push(`q=${encodeURIComponent(q)}`);
+        }
+
+        // Filtro por tipo (INGRESO/EGRESO)
+        const filtroTipo = document.getElementById('filtroTipo').value;
+        if (filtroTipo && filtroTipo !== 'all') {
+          if (filtroTipo === 'INGRESO') {
+            params.push('solo_ingresos=true');
+          } else if (filtroTipo === 'EGRESO') {
+            params.push('solo_egresos=true');
+          }
+        }
+
+        // Filtros de metadata
+        if (document.getElementById('filter_con_metadata').checked) {
+          params.push('con_metadata=true');
+        }
+        if (document.getElementById('filter_con_debin').checked) {
+          params.push('con_debin=true');
+        }
+        if (document.getElementById('filter_con_documento').checked) {
+          params.push('con_documento=true');
+        }
+        if (document.getElementById('filter_con_nombre').checked) {
+          params.push('con_nombre=true');
+        }
+
+        let url = `${API_URL}/metadata`;
+        if (params.length > 0) {
+          url += '?' + params.join('&');
+        }
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        loading.style.display = 'none';
+
+        if (!data.items || data.items.length === 0) {
+          empty.style.display = 'block';
+        } else {
+          tableContainer.style.display = 'block';
+          tbody.innerHTML = '';
+
+          data.items.forEach(mov => {
+            const tr = document.createElement('tr');
+
+            // Formatear fecha
+            const fecha = new Date(mov.fecha);
+            const fechaFormateada = fecha.toLocaleDateString('es-AR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit'
+            });
+
+            // Formatear monto
+            const montoClass = mov.monto >= 0 ? 'positive' : 'negative';
+            const montoFormateado = new Intl.NumberFormat('es-AR', {
+              style: 'currency',
+              currency: 'ARS'
+            }).format(mov.monto);
+
+            // Categorización
+            const categoria = mov.categoria || '-';
+            const subcategoria = mov.subcategoria || '-';
+            const confianza = mov.confianza;
+
+            // Determinar clase y texto de confianza
+            let confianzaClass = 'low';
+            let confianzaTexto = '-';
+            if (confianza !== null && confianza !== undefined) {
+              confianzaTexto = `${confianza}%`;
+              if (confianza >= 80) confianzaClass = 'high';
+              else if (confianza >= 50) confianzaClass = 'medium';
+            }
+
+            // Tipo de movimiento (INGRESO/EGRESO/NEUTRO)
+            let tipoMovimiento = 'NEUTRO';
+            let tipoBadgeClass = 'badge-neutro';
+            if (mov.monto > 0) {
+              tipoMovimiento = 'INGRESO';
+              tipoBadgeClass = 'badge-ingreso';
+            } else if (mov.monto < 0) {
+              tipoMovimiento = 'EGRESO';
+              tipoBadgeClass = 'badge-egreso';
+            }
+
+            // Metadata (8 campos)
+            const nombre = mov.nombre || '-';
+            const documento = mov.documento || '-';
+            const esDebin = mov.es_debin;
+            const debinId = mov.debin_id || '-';
+            const cbu = mov.cbu || '-';
+            const comercio = mov.comercio || '-';
+            const terminal = mov.terminal || '-';
+            const referencia = mov.referencia || '-';
+
+            tr.innerHTML = `
+              <td class="short">${fechaFormateada}</td>
+              <td class="short"><span class="${montoClass}">${montoFormateado}</span></td>
+              <td class="short"><span class="badge-tipo ${tipoBadgeClass}">${tipoMovimiento}</span></td>
+              <td class="long clickable-descripcion" title="Ver detalle completo"><span class="search-icon">🔍</span>${mov.descripcion || ''}</td>
+              <td class="editable-category" data-movimiento-id="${mov.id}" data-field="categoria" data-value="${mov.categoria || ''}" title="Editar categoría"><span class="category">${labelCategoria(mov.categoria)}</span></td>
+              <td class="editable-category" data-movimiento-id="${mov.id}" data-field="subcategoria" data-value="${mov.subcategoria || ''}" title="Editar subcategoría">${labelSub(mov.subcategoria)}</td>
+              <td class="short"><span class="confidence ${confianzaClass}">${confianzaTexto}</span></td>
+              <td class="long">${nombre}</td>
+              <td>${documento}</td>
+              <td class="short"><span class="badge ${esDebin ? 'badge-yes' : 'badge-no'}">${esDebin ? 'SÍ' : 'NO'}</span></td>
+              <td>${debinId}</td>
+              <td>${cbu}</td>
+              <td>${comercio}</td>
+              <td>${terminal}</td>
+              <td>${referencia}</td>
+            `;
+
+            // Agregar evento click SOLO para la celda de descripción
+            const descripcionCell = tr.querySelector('td.clickable-descripcion');
+            if (descripcionCell) {
+              descripcionCell.addEventListener('click', () => {
+                mostrarDetalle(mov);
+              });
+            }
+
+            // Agregar evento click para celdas editables de categoría/subcategoría
+            tr.querySelectorAll('td.editable-category').forEach(cell => {
+              cell.addEventListener('click', () => {
+                abrirEditorCategoria(mov);
+              });
+            });
+
+            tbody.appendChild(tr);
+          });
+        }
+
+        // Renderizar estadísticas de confianza
+        renderizarEstadisticas(data.stats);
+
+      } catch (err) {
+        loading.style.display = 'none';
+        error.textContent = `Error: ${err.message}`;
+        error.style.display = 'block';
+        // Ocultar panel de stats en caso de error
+        document.getElementById('stats-panel').classList.remove('visible');
+      }
+    }
+
+    // ============================================
+    // QUALITY PANEL - ASIGNACIÓN DE CLASES SEGÚN STATS
+    // ============================================
+    // Entrada: stats del backend
+    // Salida: clase CSS para las cards de calidad
+    // Clases posibles:
+    // - quality-good
+    // - quality-warning
+    // - quality-bad
+    // - quality-neutral
+    // ============================================
+    function getQualityClass(stats) {
+      if (!stats || stats.total_filtrado === 0) {
+        return 'quality-neutral';
+      }
+
+      const total = stats.total_filtrado;
+      const promedio = stats.confianza_promedio;
+      const pctCero = stats.confianza_cero_count / total;
+      const pctBaja = stats.confianza_baja_count / total;
+
+      // 🔴 CRÍTICO
+      if (
+        (promedio !== null && promedio < 50) ||
+        pctCero >= 0.15
+      ) {
+        return 'quality-bad';
+      }
+
+      // 🟡 ATENCIÓN
+      if (
+        (promedio !== null && promedio < 80) ||
+        pctBaja >= 0.20
+      ) {
+        return 'quality-warning';
+      }
+
+      // 🟢 OK
+      return 'quality-good';
+    }
+
+    // Función para renderizar estadísticas de confianza
+    function renderizarEstadisticas(stats) {
+      const statsPanel = document.getElementById('stats-panel');
+
+      if (!stats || stats.total_filtrado === 0) {
+        // No hay datos, ocultar panel
+        statsPanel.classList.remove('visible');
+        return;
+      }
+
+      // Obtener clase de calidad según stats
+      const qualityClass = getQualityClass(stats);
+
+      // Remover clases anteriores de calidad
+      statsPanel.classList.remove('quality-good', 'quality-warning', 'quality-bad', 'quality-neutral');
+
+      // Agregar nueva clase de calidad
+      statsPanel.classList.add(qualityClass);
+
+      // Mostrar panel
+      statsPanel.classList.add('visible');
+
+      // Total
+      document.getElementById('statsTotal').textContent = stats.total_filtrado;
+
+      // Confianza promedio
+      const promedioElem = document.getElementById('statsPromedio');
+      if (stats.confianza_promedio !== null && stats.confianza_promedio !== undefined) {
+        promedioElem.textContent = `${stats.confianza_promedio}%`;
+
+        // Colorear según valor
+        promedioElem.className = 'stat-value';
+        if (stats.confianza_promedio >= 70) {
+          promedioElem.classList.add('good');
+        } else if (stats.confianza_promedio >= 50) {
+          promedioElem.classList.add('warning');
+        } else {
+          promedioElem.classList.add('danger');
+        }
+      } else {
+        promedioElem.textContent = '-';
+        promedioElem.className = 'stat-value';
+      }
+
+      // Sin confianza
+      document.getElementById('statsSin').textContent = stats.sin_confianza_count;
+      const pctSin = stats.total_filtrado > 0 ? ((stats.sin_confianza_count / stats.total_filtrado) * 100).toFixed(1) : 0;
+      document.getElementById('statsSinPct').textContent = `${pctSin}%`;
+
+      // Confianza 0%
+      document.getElementById('statsCero').textContent = stats.confianza_cero_count;
+      const pctCero = stats.total_filtrado > 0 ? ((stats.confianza_cero_count / stats.total_filtrado) * 100).toFixed(1) : 0;
+      document.getElementById('statsCeroPct').textContent = `${pctCero}%`;
+
+      // Confianza baja (<50%)
+      document.getElementById('statsBaja').textContent = stats.confianza_baja_count;
+      const pctBaja = stats.total_filtrado > 0 ? ((stats.confianza_baja_count / stats.total_filtrado) * 100).toFixed(1) : 0;
+      document.getElementById('statsBajaPct').textContent = `${pctBaja}%`;
+    }
+
+    // ============================================
+    // EDICIÓN DE CATEGORÍA/SUBCATEGORÍA
+    // ============================================
+
+    // Abrir modal de edición
+    function abrirEditorCategoria(movimiento) {
+      movimientoEditando = movimiento;
+
+      const editOverlay = document.getElementById('editOverlay');
+      const editModal = document.getElementById('editModal');
+      const selectCategoria = document.getElementById('editCategoria');
+      const selectSubcategoria = document.getElementById('editSubcategoria');
+
+      // Cargar categorías
+      selectCategoria.innerHTML = '<option value="">Seleccionar...</option>';
+      Object.keys(CATEGORIAS).forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        if (cat === movimiento.categoria) {
+          option.selected = true;
+        }
+        selectCategoria.appendChild(option);
+      });
+
+      // Cargar subcategorías de la categoría actual
+      cargarSubcategoriasEdit(movimiento.categoria || '');
+      if (movimiento.subcategoria) {
+        selectSubcategoria.value = movimiento.subcategoria;
+      }
+
+      // Mostrar modal
+      editOverlay.style.display = 'block';
+      editModal.style.display = 'block';
+    }
+
+    // Cargar subcategorías según categoría seleccionada
+    function cargarSubcategoriasEdit(categoria) {
+      const selectSubcat = document.getElementById('editSubcategoria');
+      selectSubcat.innerHTML = '<option value="">Seleccionar...</option>';
+
+      const subcats = CATEGORIAS[categoria] || {};
+
+      Object.entries(subcats).forEach(([key, label]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = label;
+        selectSubcat.appendChild(option);
+      });
+    }
+
+    // Cerrar modal de edición
+    function cerrarEditorCategoria() {
+      document.getElementById('editOverlay').style.display = 'none';
+      document.getElementById('editModal').style.display = 'none';
+      movimientoEditando = null;
+    }
+
+    // Guardar cambios de categorización
+    async function guardarCategorizacion() {
+      if (!movimientoEditando) return;
+
+      const categoria = document.getElementById('editCategoria').value;
+      const subcategoria = document.getElementById('editSubcategoria').value;
+
+      if (!categoria) {
+        mostrarToast('⚠️ Error', 'Debe seleccionar una categoría', 'error');
+        return;
+      }
+
+      try {
+        // Construir query params
+        const params = new URLSearchParams();
+        params.append('categoria', categoria);
+        if (subcategoria) {
+          params.append('subcategoria', subcategoria);
+        }
+
+        const res = await fetch(`${API_URL}/movimientos/${movimientoEditando.id}?${params.toString()}`, {
+          method: 'PUT',
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.detail || `${res.status} ${res.statusText}`);
+        }
+
+        // Cerrar modal
+        cerrarEditorCategoria();
+
+        // Mostrar confirmación
+        mostrarToast('✅ Guardado', 'Categorización actualizada correctamente', 'success');
+
+        // Recargar movimientos y stats
+        setTimeout(() => {
+          cargarMovimientos();
+        }, 500);
+
+      } catch (error) {
+        console.error('Error guardando categorización:', error);
+        mostrarToast('❌ Error', `No se pudo guardar: ${error.message}`, 'error');
+      }
+    }
+
+    // Función para mostrar modal con detalles completos
+    function mostrarDetalle(mov) {
+      const modal = document.getElementById('modalDetalle');
+      const overlay = document.getElementById('modalOverlay');
+      const content = document.getElementById('modalContent');
+
+      // Construir contenido del modal
+      content.innerHTML = `
+        <div class="detail-row">
+          <div class="detail-label">ID</div>
+          <div class="detail-value">${mov.id}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Fecha</div>
+          <div class="detail-value">${mov.fecha}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Monto</div>
+          <div class="detail-value">$${mov.monto}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Descripción Completa</div>
+          <div class="detail-value">${mov.descripcion || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Categoría</div>
+          <div class="detail-value">${mov.categoria || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Subcategoría</div>
+          <div class="detail-value">${mov.subcategoria || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Confianza</div>
+          <div class="detail-value">${mov.confianza !== null ? mov.confianza + '%' : '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Batch ID</div>
+          <div class="detail-value">${mov.batch_id || '-'}</div>
+        </div>
+        <hr>
+        <h4 style="margin-top: 16px; margin-bottom: 8px;">Metadata Extraída</h4>
+        <div class="detail-row">
+          <div class="detail-label">Nombre</div>
+          <div class="detail-value">${mov.nombre || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Documento (CUIT/CUIL/DNI)</div>
+          <div class="detail-value">${mov.documento || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Es DEBIN</div>
+          <div class="detail-value">${mov.es_debin ? 'SÍ' : 'NO'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">DEBIN ID</div>
+          <div class="detail-value">${mov.debin_id || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">CBU</div>
+          <div class="detail-value">${mov.cbu || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Comercio</div>
+          <div class="detail-value">${mov.comercio || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Terminal</div>
+          <div class="detail-value">${mov.terminal || '-'}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Referencia</div>
+          <div class="detail-value">${mov.referencia || '-'}</div>
+        </div>
+      `;
+
+      modal.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    // Cerrar modal
+    function cerrarModal() {
+      document.getElementById('modalDetalle').style.display = 'none';
+      document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    document.getElementById('modalClose').addEventListener('click', cerrarModal);
+    document.getElementById('modalOverlay').addEventListener('click', cerrarModal);
+
+    // Event listeners
+    document.getElementById('vistaSelect').addEventListener('change', cargarMovimientos);
+    document.getElementById('batchSelect').addEventListener('change', cargarMovimientos);
+    document.getElementById('filtroTipo').addEventListener('change', cargarMovimientos);
+
+    // Debounce para búsqueda
+    document.getElementById('buscarInput').addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        cargarMovimientos();
+      }, 400);
+    });
+
+    // Checkboxes y botón actualizar
+    document.getElementById('filter_con_metadata').addEventListener('change', cargarMovimientos);
+    document.getElementById('filter_con_debin').addEventListener('change', cargarMovimientos);
+    document.getElementById('filter_con_documento').addEventListener('change', cargarMovimientos);
+    document.getElementById('filter_con_nombre').addEventListener('change', cargarMovimientos);
+    document.getElementById('btnActualizar').addEventListener('click', cargarMovimientos);
+
+    // ============================================
+    // FUNCIÓN: MOSTRAR TOAST
+    // ============================================
+    function mostrarToast(titulo, mensaje, tipo = 'success') {
+      const toast = document.getElementById('toast');
+      const toastTitle = document.getElementById('toastTitle');
+      const toastMessage = document.getElementById('toastMessage');
+
+      toastTitle.textContent = titulo;
+      toastMessage.textContent = mensaje;
+
+      // Remover clases anteriores y agregar la nueva
+      toast.className = 'toast ' + tipo;
+      toast.style.display = 'block';
+
+      // Auto-ocultar después de 5 segundos
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 5000);
+    }
+
+    // ============================================
+    // FUNCIÓN: APLICAR REGLAS MASIVAS
+    // ============================================
+    async function aplicarReglasMasivas() {
+      const confirmOverlay = document.getElementById('confirmOverlay');
+      const confirmModal = document.getElementById('confirmModal');
+      const confirmDetails = document.getElementById('confirmDetails');
+
+      // Obtener filtros actuales
+      const vista = document.getElementById('vistaSelect').value;
+      const batchId = document.getElementById('batchSelect').value;
+      const periodo = vista === 'all' ? 'all' : obtenerPeriodoActualSeguro();
+
+      // Construir mensaje de confirmación
+      let detalles = [];
+      if (vista === 'all') {
+        detalles.push('📊 Ámbito: <strong>Todos los movimientos</strong>');
+      } else {
+        detalles.push(`📅 Período: <strong>${periodo}</strong>`);
+      }
+
+      if (batchId) {
+        const batchSelect = document.getElementById('batchSelect');
+        const batchNombre = batchSelect.options[batchSelect.selectedIndex].text;
+        detalles.push(`📁 Archivo: <strong>${batchNombre}</strong>`);
+      }
+
+      detalles.push('⚡ Acción: <strong>Recategorizar usando reglas aprendidas + motor cascada</strong>');
+
+      confirmDetails.innerHTML = detalles.join('<br>');
+
+      // Mostrar modal
+      confirmOverlay.style.display = 'block';
+      confirmModal.style.display = 'block';
+    }
+
+    // ============================================
+    // FUNCIÓN: CONFIRMAR APLICACIÓN DE REGLAS
+    // ============================================
+    async function confirmarAplicarReglas() {
+      const confirmOverlay = document.getElementById('confirmOverlay');
+      const confirmModal = document.getElementById('confirmModal');
+
+      // Ocultar modal
+      confirmOverlay.style.display = 'none';
+      confirmModal.style.display = 'none';
+
+      // Obtener filtros actuales
+      const vista = document.getElementById('vistaSelect').value;
+      const batchId = document.getElementById('batchSelect').value;
+      const periodo = vista === 'all' ? 'all' : obtenerPeriodoActualSeguro();
+
+      // Construir parámetros
+      const params = [];
+      if (periodo) {
+        params.push(`mes=${periodo}`);
+      }
+      if (batchId) {
+        params.push(`batch_id=${batchId}`);
+      }
+
+      let url = `${API_URL}/reglas/aplicar`;
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+
+      try {
+        mostrarToast('⏳ Procesando...', 'Aplicando reglas de categorización', 'success');
+
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Mostrar resultado
+        mostrarToast(
+          '✅ Reglas Aplicadas',
+          `${data.actualizados} de ${data.evaluados} movimientos recategorizados (${data.porcentaje_actualizados}%)`,
+          'success'
+        );
+
+        // Recargar tabla
+        setTimeout(() => {
+          cargarMovimientos();
+        }, 1500);
+
+      } catch (error) {
+        console.error('Error aplicando reglas:', error);
+        mostrarToast(
+          '❌ Error',
+          `No se pudieron aplicar las reglas: ${error.message}`,
+          'error'
+        );
+      }
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+    document.getElementById('btnAplicarReglas').addEventListener('click', aplicarReglasMasivas);
+    document.getElementById('btnConfirmarReglas').addEventListener('click', confirmarAplicarReglas);
+    document.getElementById('btnCancelarReglas').addEventListener('click', () => {
+      document.getElementById('confirmOverlay').style.display = 'none';
+      document.getElementById('confirmModal').style.display = 'none';
+    });
+
+    // Cerrar modal de confirmación al hacer click en overlay
+    document.getElementById('confirmOverlay').addEventListener('click', () => {
+      document.getElementById('confirmOverlay').style.display = 'none';
+      document.getElementById('confirmModal').style.display = 'none';
+    });
+
+    // ============================================
+    // EVENT LISTENERS - MODAL DE EDICIÓN
+    // ============================================
+    document.getElementById('btnCancelarEdit').addEventListener('click', cerrarEditorCategoria);
+    document.getElementById('btnGuardarEdit').addEventListener('click', guardarCategorizacion);
+    document.getElementById('editOverlay').addEventListener('click', cerrarEditorCategoria);
+
+    // Cambio de categoría recarga subcategorías
+    document.getElementById('editCategoria').addEventListener('change', (e) => {
+      cargarSubcategoriasEdit(e.target.value);
+    });
+
+    // Escuchar cambios en el período global (solo si vista == 'mes')
+    window.addEventListener('periodoChanged', () => {
+      const vista = document.getElementById('vistaSelect').value;
+      if (vista === 'mes') {
+        cargarMovimientos();
+      }
+    });
+
+    // ============================================
+    // BUGFIX: RECARGA AL VOLVER A LA VISTA
+    // ============================================
+
+    // Función pública para inicializar/reinicializar la vista
+    function initMetadataView() {
+      console.log('[metadata] Inicializando vista metadata');
+      cargarBatches();
+      cargarMovimientos();
+    }
+
+    // Hacer disponible globalmente para uso externo
+    window.initMetadataView = initMetadataView;
+
+    // ===============================
+    // FIX DEFINITIVO: Carga robusta de Metadata
+    // ===============================
+    async function inicializarMetadata(intentos = 0) {
+      // Cargar catálogo de labels al inicio (MVP)
+      await cargarCatalogoLabels();
+
+      const MAX_INTENTOS = 5;
+
+      const periodo = obtenerPeriodoActualSeguro();
+
+      if (!periodo) {
+        if (intentos < MAX_INTENTOS) {
+          console.log(`[metadata] Periodo no disponible, reintentando (${intentos + 1}/${MAX_INTENTOS})`);
+          setTimeout(() => inicializarMetadata(intentos + 1), 120);
+          return;
+        }
+
+        console.warn('[metadata] Periodo no disponible tras reintentos, esperando acción del usuario');
+        // IMPORTANTE: no mostrar error rojo, solo cargar batches
+        cargarBatches();
+        return;
+      }
+
+      console.log('[metadata] Periodo disponible:', periodo);
+      initMetadataView();
+    }
+
+    // DOMContentLoaded garantiza que el selector del navbar existe
+    document.addEventListener('DOMContentLoaded', () => {
+      inicializarMetadata();
+    });
+
+    // Detectar cuando la vista se vuelve visible (fix para navegación SPA)
+    document.addEventListener('visibilitychange', () => {
+      const metadataContainer = document.querySelector('main');
+      if (metadataContainer && !document.hidden) {
+        // Solo recargar si estamos en la página metadata
+        if (window.location.pathname.includes('/metadata')) {
+          console.log('[metadata] Vista visible, recargando...');
+          initMetadataView();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

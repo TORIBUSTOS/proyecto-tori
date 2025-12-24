@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - TORO</title>
+
+    <link rel="stylesheet" href="/static/css/header.css">
+    <script src="/static/js/periodo-global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <style>
+        :root{
+            --bg: #0b1220;
+            --surface: #0f172a;              /* cards */
+            --surface-2: rgba(255,255,255,0.03);
+            --border: rgba(148,163,184,0.18);
+            --border-2: rgba(255,255,255,0.08);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --muted-2: #cbd5e1;
+            --input-bg: #020617;
+            --accent: #3b82f6;               /* azul botones */
+            --accent-hover: #2563eb;
+            --success: #4ade80;
+            --danger: #f87171;
+            --warning: #fbbf24;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Panel superior (antes era blanco) */
+        .header {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: none;
+            padding: 30px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        h1 {
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls label {
+            color: var(--muted-2);
+            font-weight: 600;
+        }
+
+        .controls select {
+            padding: 9px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--input-bg);
+            color: var(--text);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .controls select:focus {
+            border-color: rgba(59,130,246,0.6);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+
+        .btn {
+            padding: 9px 16px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        .btn-secondary {
+            background: rgba(100,116,139,0.35);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover { background: rgba(100,116,139,0.5); }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* Cards (antes blancas) */
+        .chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: none;
+            padding: 26px;
+        }
+
+        .chart-card.full-width { grid-column: 1 / -1; }
+
+        .chart-card h3 {
+            color: var(--text);
+            margin-bottom: 18px;
+            font-size: 18px;
+        }
+
+        .chart-container { position: relative; height: 300px; }
+        .chart-container.tall { height: 400px; }
+
+        .loading {
+            text-align: center;
+            color: var(--muted);
+            padding: 40px;
+        }
+
+        .error {
+            background: rgba(239,68,68,0.12);
+            color: var(--danger);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid rgba(239,68,68,0.25);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--border-2);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: var(--text);
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .stat-value.positive { color: var(--success); }
+        .stat-value.negative { color: var(--danger); }
+
+        /* Resumen Ejecutivo (usa vars que ahora sí existen) */
+        .simple-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .simple-table tr {
+            border-bottom: 1px solid var(--border-2);
+        }
+
+        .simple-table td {
+            padding: 10px 12px;
+        }
+
+        .simple-table td:first-child {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .simple-table td:last-child {
+            text-align: right;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        #resumen-ejecutivo h3 {
+            margin-bottom: 18px;
+            color: var(--text);
+        }
+
+        #resumen-ejecutivo h4 {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        /* Insights (antes con fondo claro) */
+        .insight-card {
+            background: rgba(255,255,255,0.03);
+            border-left: 4px solid var(--accent);
+            border: 1px solid var(--border-2);
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+        }
+
+        .insight-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .insight-message {
+            font-size: 14px;
+            color: var(--muted-2);
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .insight-action {
+            font-size: 13px;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        .insight-action::before {
+            content: "Acción: ";
+            font-weight: 900;
+            font-style: normal;
+            color: rgba(59,130,246,0.95);
+        }
+
+        .no-insights {
+            text-align: center;
+            color: var(--muted);
+            padding: 24px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .chart-container { height: 250px; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header común -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="header-left">
+                <a href="/" class="brand">
+                    <img src="/static/img/brand/logo-toro-navbar-clean.png" alt="TORO" class="logo-toro-navbar">
+                    <div class="brand-text">
+                        <div class="brand-title">Investment Manager</div>
+                        <div class="brand-subtitle">Gestión Financiera Inteligente</div>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="header-nav">
+                <div class="header-periodo">
+                    <label for="periodo-global">📅 Periodo:</label>
+                    <select id="periodo-global">
+                        <option value="">Todos los periodos</option>
+                    </select>
+                </div>
+                <a href="/" class="nav-link" data-toro-nav="1">📊 Dashboard</a>
+                <a href="/reportes" class="nav-link" data-toro-nav="1">📈 Reportes</a>
+                <a href="/analytics" class="nav-link active" data-toro-nav="1">📉 Analytics</a>
+                <a href="/configuracion" class="nav-link" data-toro-nav="1">⚙️ Configuración</a>
+                <a href="/metadata" class="nav-link" data-toro-nav="1">🔍 Metadata</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="header">
+            <h1>📊 Analytics & Visualizaciones</h1>
+            <p class="subtitle">Análisis gráfico de ingresos, egresos y flujo de caja</p>
+
+            <div class="controls">
+                <label for="mes">Mes:</label>
+                <select id="mes">
+                    <option value="">Todos los períodos</option>
+                </select>
+
+                <button class="btn btn-primary" onclick="cargarGraficos()">🔄 Actualizar Gráficos</button>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <!-- PIE CHART: INGRESOS -->
+            <div class="chart-card">
+                <h3>💰 Ingresos por Categoría</h3>
+                <div class="chart-container">
+                    <canvas id="pie-ingresos"></canvas>
+                </div>
+                <div class="stats" id="stats-ingresos"></div>
+            </div>
+
+            <!-- PIE CHART: EGRESOS -->
+            <div class="chart-card">
+                <h3>💸 Egresos por Categoría</h3>
+                <div class="chart-container">
+                    <canvas id="pie-egresos"></canvas>
+                </div>
+                <div class="stats" id="stats-egresos"></div>
+            </div>
+
+            <!-- LINE CHART: FLUJO DIARIO -->
+            <div class="chart-card full-width">
+                <h3>📈 Flujo de Caja Diario</h3>
+                <div class="chart-container tall">
+                    <canvas id="line-flujo"></canvas>
+                </div>
+                <div class="stats" id="stats-flujo"></div>
+            </div>
+        </div>
+
+        <!-- RESUMEN EJECUTIVO (datos del endpoint /api/reportes) -->
+        <div class="chart-card full-width" id="resumen-ejecutivo" style="margin-top: 24px;">
+            <!-- Se completa dinámicamente por JS -->
+        </div>
+
+        <!-- INSIGHTS FINANCIEROS/OPERATIVOS -->
+        <div class="chart-card full-width" id="insights-container" style="margin-top: 24px;">
+            <h3>🧠 Insights del Período</h3>
+            <div id="insights-content">
+                <!-- Se completa dinámicamente por JS -->
+            </div>
+        </div>
+
+        <div id="error-container"></div>
+    </div>
+
+    <script src="/static/js/charts.js"></script>
+</body>
+</html>

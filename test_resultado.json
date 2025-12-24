@@ -1,0 +1,44 @@
+{
+  "status": "success",
+  "mensaje": "Proceso completo exitoso: 5 movimientos procesados",
+  "archivo": "20251213_050953_extracto_prueba.xlsx",
+  "consolidar": {
+    "insertados": 5,
+    "columnas_detectadas": [
+      "Fecha",
+      "Concepto",
+      "Detalle",
+      "Debito",
+      "Credito",
+      "Saldo"
+    ],
+    "archivo_guardado": "output\\uploads\\20251213_085058_20251213_050953_extracto_prueba.xlsx"
+  },
+  "categorizar": {
+    "procesados": 5,
+    "categorizados": 5,
+    "sin_match": 3,
+    "categorias_distintas": [
+      "OTROS",
+      "TRANSFERENCIAS"
+    ]
+  },
+  "reporte": {
+    "periodo": "2025-12",
+    "kpis": {
+      "ingresos_total": 0.0,
+      "egresos_total": 0.0,
+      "saldo_neto": 0.0,
+      "cantidad_movimientos": 0,
+      "categorias_activas": 0
+    },
+    "top_egresos_por_categoria": [],
+    "ultimos_movimientos": [],
+    "comparacion_mes_anterior": {
+      "ingresos_total_anterior": 0.0,
+      "egresos_total_anterior": 0.0,
+      "saldo_neto_anterior": 0.0,
+      "variacion_saldo_pct": null
+    }
+  }
+}

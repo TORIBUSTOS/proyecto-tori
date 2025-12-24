@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Batches - TORO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .actions {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-refresh {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-refresh:hover {
+            background: #45a049;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #da190b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            font-weight: 600;
+            color: #555;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+
+        }
+
+        .batch-id {
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .batch-filename {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .batch-date {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .batch-count {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+
+            border-radius: 8px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .modal-text {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: #999;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #777;
+        }
+
+        .btn-confirm {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #da190b;
+        }
+
+        .nav-links {
+            margin-bottom: 20px;
+        }
+
+        .nav-links a {
+            color: #1976d2;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="batches">
+    <div class="container">
+        <div class="nav-links">
+            <a href="/" data-toro-nav="1">← Volver al Dashboard</a>
+        </div>
+
+        <h1>Gestión de Batches</h1>
+        <p class="subtitle">Administra las importaciones de extractos bancarios</p>
+
+        <div class="actions">
+            <button class="btn btn-refresh" onclick="cargarBatches()">🔄 Actualizar</button>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+        <div id="loading" class="loading">Cargando batches...</div>
+        <div id="empty" class="empty" style="display: none;">
+            No hay batches importados aún.
+            <br><br>
+            Importa un extracto bancario desde el dashboard para comenzar.
+        </div>
+
+        <div id="table-container" style="display: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Archivo</th>
+                        <th>Fecha de Importación</th>
+                        <th>Movimientos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="batches-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">¿Eliminar batch?</div>
+            <div class="modal-text">
+                ¿Estás seguro que querés eliminar este batch?
+                <br><br>
+                <strong>Esta acción no se puede deshacer.</strong>
+                <br>
+                Se eliminarán todos los movimientos asociados.
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn btn-confirm" onclick="confirmarEliminar()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api';
+        let batchAEliminar = null;
+
+        async function cargarBatches() {
+            const loading = document.getElementById('loading');
+            const empty = document.getElementById('empty');
+            const tableContainer = document.getElementById('table-container');
+            const error = document.getElementById('error');
+            const tbody = document.getElementById('batches-tbody');
+
+            loading.style.display = 'block';
+            empty.style.display = 'none';
+            tableContainer.style.display = 'none';
+            error.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/batches`);
+                if (!response.ok) throw new Error('Error cargando batches');
+
+                const batches = await response.json();
+                loading.style.display = 'none';
+
+                if (batches.length === 0) {
+                    empty.style.display = 'block';
+                } else {
+                    tableContainer.style.display = 'block';
+                    tbody.innerHTML = '';
+
+                    batches.forEach(batch => {
+                        const tr = document.createElement('tr');
+                        const fecha = new Date(batch.imported_at);
+                        const fechaFormateada = fecha.toLocaleString('es-AR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+
+                        tr.innerHTML = `
+                            <td class="batch-id">#${batch.id}</td>
+                            <td class="batch-filename">${batch.filename}</td>
+                            <td class="batch-date">${fechaFormateada}</td>
+                            <td class="batch-count">${batch.rows_inserted} movimientos</td>
+                            <td>
+                                <button class="btn btn-delete" onclick="mostrarModal(${batch.id}, '${batch.filename}')">
+                                    🗑️ Eliminar
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (err) {
+                loading.style.display = 'none';
+                error.textContent = `Error: ${err.message}`;
+                error.style.display = 'block';
+            }
+        }
+
+        function mostrarModal(batchId, filename) {
+            batchAEliminar = batchId;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function cerrarModal() {
+            batchAEliminar = null;
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        async function confirmarEliminar() {
+            if (!batchAEliminar) return;
+
+            const error = document.getElementById('error');
+
+            try {
+                const response = await fetch(`${API_URL}/batches/${batchAEliminar}`, { method: 'DELETE' });
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.detail || 'Error eliminando batch');
+                }
+
+                cerrarModal();
+                await cargarBatches();
+
+            } catch (err) {
+                cerrarModal();
+                error.textContent = `Error: ${err.message}`;
+                error.style.display = 'block';
+                setTimeout(() => { error.style.display = 'none'; }, 5000);
+            }
+        }
+
+        cargarBatches();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') cerrarModal();
+        });
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target.id === 'modal') cerrarModal();
+        });
+    </script>
+
+    <script src="/static/js/periodo-global.js"></script>
+</body>
+</html>

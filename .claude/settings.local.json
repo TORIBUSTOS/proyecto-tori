@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(tree:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(sort:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(taskkill:*)",
+      "Bash(timeout:*)",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(..\\.venv\\Scripts\\python.exe -m uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(../.venv/Scripts/uvicorn.exe:*)",
+      "Bash(.venv/Scripts/uvicorn.exe:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(.venv/Scripts/pip.exe install:*)",
+      "Bash(.venvScriptspython.exe test_edicion_movimientos.py)",
+      "Bash(...venvScriptspython.exe -c \"from backend.api.routes import router; print(''✅ Routes importadas correctamente''); print(f''Total endpoints: {len([r for r in router.routes])}'')\")",
+      "Bash(...venvScriptspython.exe -c \"from backend.database.session import get_db; from backend.models.movimiento import Batch; db = next(get_db()); batches = db.query(Batch).order_by(Batch.fecha_procesamiento.desc()).limit(10).all(); [print(f''{b.id} | {b.archivo_origen} | {b.mes_periodo} | Movs: {b.cantidad_movimientos} | {b.fecha_procesamiento}'') for b in batches]\")",
+      "Bash(.venv/Scripts/python.exe test_exportacion.py)",
+      "Bash(ls:*)",
+      "Bash(.venv/Scripts/python.exe test_excel_ejecutivo.py)",
+      "Bash(python test_analytics_fix.py:*)",
+      "Bash(chcp 6500)",
+      "Bash(.venvScriptspython.exe backend/database/migrate_add_banco_origen.py)",
+      "Bash(python run_dev.py:*)",
+      "Bash(.venvScriptsactivate)",
+      "Bash(awk:*)",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from backend.api.main import app; print(''✓ Servidor importado correctamente'')\")",
+      "Bash(\".venv/Scripts/python.exe\" test_batch_admin.py)",
+      "Bash(\".venv/Scripts/python.exe\" -c \"from backend.api.main import app; print(''✓ Servidor importado correctamente con ambos routers admin'')\")",
+      "Bash(git checkout:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nchore: initial commit rama develop - estructura completa del proyecto\n\nIncluye:\n- Backend completo (API, core, database, models, utils)\n- Frontend completo\n- Sistema de reglas y categorización\n- Scripts de prueba y utilidades\n- Documentación de todas las etapas implementadas\n- Configuración de entorno y dependencias\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

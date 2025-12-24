@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="card">
+  <h1>Dashboard</h1>
+  <p>
+    Hola <strong>{{ user or "Usuario" }}</strong>, bienvenido a
+    <strong>TORO Investment Manager</strong>.
+  </p>
+
+  <div class="grid">
+    <a class="tile" href="/docs" target="_blank">
+      <div class="tile-title">📚 API Docs</div>
+      <div class="tile-desc">Explorar endpoints desde Swagger</div>
+    </a>
+
+    <a class="tile" href="/health" target="_blank">
+      <div class="tile-title">🩺 Health Check</div>
+      <div class="tile-desc">Estado del servidor</div>
+    </a>
+
+    <a class="tile" href="/reportes">
+      <div class="tile-title">📊 Reportes</div>
+      <div class="tile-desc">Ver reporte ejecutivo</div>
+    </a>
+
+    <a class="tile" href="/api/dashboard" target="_blank">
+      <div class="tile-title">📈 Datos Dashboard</div>
+      <div class="tile-desc">JSON del dashboard</div>
+    </a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Subir Excel y procesar todo</h2>
+  <p>Esto ejecuta: <code>consolidar → categorizar → reporte</code> usando <code>/api/proceso-completo</code>.</p>
+
+  <form id="upload-form" class="upload-form">
+    <input id="excel-file" name="archivo" type="file" accept=".xlsx,.xls" required />
+    <button id="process-btn" type="submit">Procesar</button>
+  </form>
+
+  <div id="upload-status" class="muted" style="margin-top:10px;"></div>
+
+  <details style="margin-top:12px;">
+    <summary>Ver resultado (debug)</summary>
+    <pre id="process-result" style="white-space: pre-wrap; overflow:auto; max-height: 320px;"></pre>
+  </details>
+</section>
+
+<section class="card">
+  <h2>Datos en vivo (API)</h2>
+  <p>Esto viene de <code>/api/dashboard</code>.</p>
+
+  <div class="grid">
+    <div class="tile">
+      <div class="tile-title">Saldo total</div>
+      <div class="tile-desc" id="kpi-saldo">—</div>
+    </div>
+    <div class="tile">
+      <div class="tile-title">Movimientos del mes</div>
+      <div class="tile-desc" id="kpi-movimientos">—</div>
+    </div>
+    <div class="tile">
+      <div class="tile-title">Categorías activas</div>
+      <div class="tile-desc" id="kpi-categorias">—</div>
+    </div>
+    <div class="tile">
+      <div class="tile-title">Estado</div>
+      <div class="tile-desc" id="kpi-estado">—</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:14px;">Últimos movimientos</h3>
+  <div id="ultimos-movs"></div>
+
+  <details style="margin-top:12px;">
+    <summary>Ver JSON (debug)</summary>
+    <pre id="live-data" style="white-space: pre-wrap; overflow:auto; max-height: 260px;"></pre>
+  </details>
+</section>
+
+<!-- Modal de edición de movimiento (ETAPA 3) -->
+<div id="modal-editar" class="modal">
+  <div class="modal-content">
+    <h3 class="modal-title">Editar Movimiento</h3>
+
+    <div class="form-group">
+      <label for="edit-descripcion">Descripción</label>
+      <input id="edit-descripcion" type="text" class="form-input" placeholder="Descripción del movimiento" />
+    </div>
+
+    <div class="form-group">
+      <label for="edit-categoria">Categoría</label>
+      <select id="edit-categoria" class="form-select">
+        <option value="INGRESOS">INGRESOS</option>
+        <option value="EGRESOS">EGRESOS</option>
+        <option value="IMPUESTOS">IMPUESTOS</option>
+        <option value="GASTOS_OPERATIVOS">GASTOS OPERATIVOS</option>
+        <option value="COMISIONES_BANCARIAS">COMISIONES BANCARIAS</option>
+        <option value="PRESTADORES">PRESTADORES</option>
+        <option value="SERVICIOS">SERVICIOS</option>
+        <option value="SUELDOS">SUELDOS</option>
+        <option value="OTROS">OTROS</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="edit-subcategoria">Subcategoría</label>
+      <select id="edit-subcategoria" class="form-select">
+        <!-- Dinámico según categoría -->
+      </select>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+      <label style="display: flex; align-items: center; cursor: pointer; user-select: none;">
+        <input id="recordar-regla" type="checkbox" checked style="margin-right: 8px; cursor: pointer;" />
+        <span style="font-weight: 500;">Recordar esta regla (ETAPA 4)</span>
+      </label>
+      <small style="color: #718096; display: block; margin-top: 4px; margin-left: 24px;">
+        Se guardará esta categorización para futuros movimientos similares
+      </small>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarCambios()">Guardar Cambios</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

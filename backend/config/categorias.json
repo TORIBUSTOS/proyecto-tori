@@ -1,0 +1,103 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2025-12-23",
+  "categorias": [
+    {
+      "key": "INGRESOS",
+      "label": "Ingresos",
+      "tipo": "INGRESO",
+      "icon": "💰",
+      "color": "#22c55e",
+      "subcategorias": [
+        { "key": "Ingresos - Transferencias", "label": "Transferencias" },
+        { "key": "Ingresos - Transferencias Operativas", "label": "Transferencias operativas" },
+        { "key": "Ingresos - DEBIN Afiliados", "label": "DEBIN afiliados" },
+        { "key": "Ingresos - DEBIN Clientes", "label": "DEBIN clientes" },
+        { "key": "Ingresos - Tarjetas", "label": "Tarjetas" },
+        { "key": "Ingresos - Ajustes / Devoluciones", "label": "Ajustes / Devoluciones" }
+      ]
+    },
+    {
+      "key": "EGRESOS",
+      "label": "Egresos",
+      "tipo": "EGRESO",
+      "icon": "💸",
+      "color": "#ef4444",
+      "subcategorias": [
+        { "key": "Prestadores_Farmacias", "label": "Prestadores farmacias" },
+        { "key": "Prestadores_Sanatorios", "label": "Prestadores sanatorios" },
+        { "key": "Prestadores_Profesionales", "label": "Prestadores profesionales" },
+        { "key": "Sueldos", "label": "Sueldos" },
+        { "key": "Gastos_Operativos", "label": "Gastos operativos" },
+        { "key": "Egresos - Transferencias", "label": "Transferencias" },
+        { "key": "Egresos - Transferencias a Terceros", "label": "Transferencias a terceros" },
+        { "key": "Egresos - DEBIN Pagos", "label": "DEBIN pagos" },
+        { "key": "Egresos - Ajustes", "label": "Ajustes" }
+      ]
+    },
+    {
+      "key": "IMPUESTOS",
+      "label": "Impuestos",
+      "tipo": "EGRESO",
+      "icon": "🏛️",
+      "color": "#f59e0b",
+      "subcategorias": [
+        { "key": "Impuestos - Débitos y Créditos", "label": "Débitos y créditos" },
+        { "key": "Impuestos - IVA", "label": "IVA" },
+        { "key": "Impuestos - IIBB", "label": "Ingresos brutos (IIBB)" },
+        { "key": "Impuestos - AFIP", "label": "AFIP" },
+        { "key": "Impuestos - Percepciones", "label": "Percepciones" },
+        { "key": "Impuestos - Devoluciones", "label": "Devoluciones" }
+      ]
+    },
+    {
+      "key": "GASTOS_OPERATIVOS",
+      "label": "Gastos operativos",
+      "tipo": "EGRESO",
+      "icon": "🛒",
+      "color": "#8b5cf6",
+      "subcategorias": [
+        { "key": "Gastos Operativos - Compras", "label": "Compras" },
+        { "key": "Gastos Operativos - Viáticos", "label": "Viáticos" },
+        { "key": "Gastos Operativos - Compras Marketplace", "label": "Compras en marketplaces" },
+        { "key": "Gastos Operativos - Insumos", "label": "Insumos" }
+      ]
+    },
+    {
+      "key": "COMISIONES_BANCARIAS",
+      "label": "Comisiones bancarias",
+      "tipo": "EGRESO",
+      "icon": "🏦",
+      "color": "#06b6d4",
+      "subcategorias": [
+        { "key": "Comisiones Bancarias - Transferencias", "label": "Transferencias" },
+        { "key": "Comisiones Bancarias - Cheques", "label": "Cheques" },
+        { "key": "Comisiones Bancarias - Mantenimiento", "label": "Mantenimiento" },
+        { "key": "Comisiones Bancarias - Otras", "label": "Otras" }
+      ]
+    },
+    {
+      "key": "PRESTADORES",
+      "label": "Prestadores",
+      "tipo": "EGRESO",
+      "icon": "🏥",
+      "color": "#ec4899",
+      "subcategorias": [
+        { "key": "Prestadores - Servicios", "label": "Servicios" },
+        { "key": "Prestadores - Profesionales", "label": "Profesionales" },
+        { "key": "Prestadores - Servicios Recurrentes", "label": "Servicios recurrentes" },
+        { "key": "Prestadores - Pagos Eventuales", "label": "Pagos eventuales" }
+      ]
+    },
+    {
+      "key": "OTROS",
+      "label": "Otros",
+      "tipo": "NEUTRO",
+      "icon": "📦",
+      "color": "#64748b",
+      "subcategorias": [
+        { "key": "Sin_Clasificar", "label": "Sin clasificar" }
+      ]
+    }
+  ]
+}

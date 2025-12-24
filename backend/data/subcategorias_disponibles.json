@@ -1,0 +1,113 @@
+{
+  "version": "2.1",
+  "descripcion": "Lista completa de subcategorías disponibles para edición manual y reglas aprendibles",
+  "fecha_actualizacion": "2025-12-19",
+  "notas": "SAFE MODE - Nuevas subcategorías agregadas sin eliminar existentes. Backward compatible.",
+
+  "subcategorias": {
+    "INGRESOS": [
+      "Ingresos - Transferencias",
+      "Ingresos - Transferencias Operativas",
+      "Ingresos - DEBIN Afiliados",
+      "Ingresos - DEBIN Clientes",
+      "Ingresos - Tarjetas",
+      "Ingresos - Ajustes / Devoluciones",
+      "Ingresos - Otros"
+    ],
+
+    "EGRESOS": [
+      "Egresos - Transferencias",
+      "Egresos - Transferencias a Terceros",
+      "Egresos - DEBIN Pagos",
+      "Egresos - Ajustes",
+      "Egresos - Varios"
+    ],
+
+    "IMPUESTOS": [
+      "Impuestos - Débitos y Créditos",
+      "Impuestos - IVA",
+      "Impuestos - IIBB",
+      "Impuestos - AFIP",
+      "Impuestos - Percepciones",
+      "Impuestos - Devoluciones"
+    ],
+
+    "GASTOS_OPERATIVOS": [
+      "Gastos Operativos - Compras",
+      "Gastos Operativos - Viáticos",
+      "Gastos Operativos - Compras Marketplace",
+      "Gastos Operativos - Compras Operativas",
+      "Gastos Operativos - Insumos"
+    ],
+
+    "COMISIONES_BANCARIAS": [
+      "Comisiones Bancarias - Transferencias",
+      "Comisiones Bancarias - Cheques",
+      "Comisiones Bancarias - Mantenimiento",
+      "Comisiones Bancarias - Otras"
+    ],
+
+    "PRESTADORES": [
+      "Prestadores - Servicios",
+      "Prestadores - Profesionales",
+      "Prestadores - Servicios Recurrentes",
+      "Prestadores - Pagos Eventuales"
+    ],
+
+    "SERVICIOS": [
+      "Servicios - Varios",
+      "Servicios - Electricidad",
+      "Servicios - Internet",
+      "Servicios - Software",
+      "Servicios - Otros"
+    ],
+
+    "SUELDOS": [
+      "Sueldos - Empleados",
+      "Sueldos - Cargas Sociales",
+      "Sueldos - Bonificaciones"
+    ]
+  },
+
+  "categorias_principales": [
+    "INGRESOS",
+    "EGRESOS",
+    "IMPUESTOS",
+    "GASTOS_OPERATIVOS",
+    "COMISIONES_BANCARIAS",
+    "PRESTADORES",
+    "SERVICIOS",
+    "SUELDOS",
+    "SIN_CATEGORIA"
+  ],
+
+  "notas_implementacion": {
+    "backward_compatibility": "Todas las subcategorías existentes se mantienen",
+    "nuevas_2025_12_19": [
+      "Ingresos - Transferencias Operativas",
+      "Ingresos - DEBIN Clientes",
+      "Ingresos - Ajustes / Devoluciones",
+      "Egresos - Transferencias a Terceros",
+      "Egresos - DEBIN Pagos",
+      "Egresos - Ajustes",
+      "Impuestos - IVA",
+      "Impuestos - AFIP",
+      "Impuestos - Percepciones",
+      "Impuestos - Devoluciones",
+      "Gastos Operativos - Viáticos",
+      "Gastos Operativos - Compras Marketplace",
+      "Gastos Operativos - Compras Operativas",
+      "Gastos Operativos - Insumos",
+      "Comisiones Bancarias - Cheques",
+      "Comisiones Bancarias - Mantenimiento",
+      "Prestadores - Profesionales",
+      "Prestadores - Servicios Recurrentes",
+      "Prestadores - Pagos Eventuales",
+      "Servicios - Electricidad",
+      "Servicios - Internet",
+      "Servicios - Software",
+      "Servicios - Otros"
+    ],
+    "uso": "Este archivo es de referencia para UI de edición manual y validaciones"
+  }
+}
